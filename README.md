@@ -5,7 +5,7 @@
 ### Initialize
 
 ```js
-client = new Client(config.userId, config.apiKey);
+const client = new Client(config.userId, config.apiKey);
 ```
 
 ### Transaction email
