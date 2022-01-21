@@ -1,11 +1,12 @@
 import Client from '../../';
 import Transaction from './transaction';
+import Base from './transaction/base';
 
 export default class Delivery {
 	static client?: Client;
 
 	constructor() {
-		Transaction.client = Delivery.client;
+		Base.client = Delivery.client;
 	}
 
 	transaction(): Transaction {

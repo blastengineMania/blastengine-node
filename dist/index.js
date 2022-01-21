@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const crypto_1 = __importDefault(require("crypto"));
 const delivery_1 = __importDefault(require("./libs/delivery/"));
+const bulk_1 = __importDefault(require("./libs/delivery/transaction/bulk"));
 class Client {
     constructor(userId, apiKey) {
         this.userId = '';
@@ -14,7 +15,12 @@ class Client {
         this.apiKey = apiKey;
         this.generateToken();
         delivery_1.default.client = this;
+        bulk_1.default.client = this;
         this.Delivery = new delivery_1.default;
+        this.Bulk = new bulk_1.default;
+    }
+    bluk() {
+        return new bulk_1.default;
     }
     generateToken() {
         const str = `${this.userId}${this.apiKey}`;

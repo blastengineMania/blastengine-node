@@ -12,26 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const superagent_1 = __importDefault(require("superagent"));
-class Transaction {
+const base_1 = __importDefault(require("./base"));
+class Transaction extends base_1.default {
     constructor() {
-        this.fromName = '';
-        this.fromEmail = '';
+        super(...arguments);
         this.to = '';
-        this.subject = '';
-        this.encode = 'UTF-8';
-        this.text_part = '';
-        this.html_part = '';
         this.url = 'https://app.engn.jp/api/v1/deliveries/transaction';
-    }
-    setSubject(subject) {
-        this.subject = subject;
-        return this;
-    }
-    setFrom(email, name = '') {
-        this.fromEmail = email;
-        this.fromName = name;
-        return this;
     }
     setTo(email) {
         if (Array.isArray(email)) {
@@ -40,38 +26,25 @@ class Transaction {
         this.to = email;
         return this;
     }
-    setEncode(encode) {
-        this.encode = encode;
-        return this;
+    params() {
+        return {
+            from: {
+                email: this.fromEmail,
+                name: this.fromName
+            },
+            to: this.to,
+            subject: this.subject,
+            encode: this.encode,
+            text_part: this.text_part,
+            html_part: this.html_part,
+        };
     }
-    setText(text) {
-        this.text_part = text;
-        return this;
-    }
-    setHtml(html) {
-        this.html_part = html;
-        return this;
-    }
-    send() {
-        var _a;
+    send(url, requestParams) {
+        const _super = Object.create(null, {
+            req: { get: () => super.req }
+        });
         return __awaiter(this, void 0, void 0, function* () {
-            const params = {
-                from: {
-                    email: this.fromEmail,
-                    name: this.fromName
-                },
-                to: this.to,
-                subject: this.subject,
-                encode: this.encode,
-                text_part: this.text_part,
-                html_part: this.html_part,
-            };
-            const res = yield superagent_1.default
-                .post(this.url)
-                .send(params)
-                .set('Authorization', `Bearer ${(_a = Transaction.client) === null || _a === void 0 ? void 0 : _a.token}`)
-                .set('Content-Type', 'application/json');
-            return res.body;
+            return _super.req.call(this, 'post', this.url, this.params());
         });
     }
 }

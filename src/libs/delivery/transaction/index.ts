@@ -1,29 +1,13 @@
 import request from 'superagent';
 import Client from '../../../';
+import Bulk from './bulk/';
+import Base from './base';
 
-export default class Transaction {
-	static client?: Client;
-	private fromName = '';
-	private fromEmail = '';
-	private to = '';
-	private subject = '';
-	private encode = 'UTF-8';
-	private text_part = '';
-	private html_part = '';
-	private url = 'https://app.engn.jp/api/v1/deliveries/transaction';
+export default class Transaction extends Base {
+	public to = '';
+	public url = 'https://app.engn.jp/api/v1/deliveries/transaction';
 	
-	setSubject(subject: string): Transaction {
-		this.subject = subject;
-		return this;
-	}
-
-	setFrom(email: string, name = ''): Transaction {
-		this.fromEmail = email;
-		this.fromName = name;
-		return this;
-	}
-
-	setTo(email: string | string[]): Transaction {
+	setTo(email: string | string[]): BEReturnType {
 		if (Array.isArray(email)) {
 			email = email.join(',');
 		}
@@ -31,23 +15,8 @@ export default class Transaction {
 		return this;
 	}
 
-	setEncode(encode: string): Transaction {
-		this.encode = encode;
-		return this;
-	}
-
-	setText(text: string): Transaction {
-		this.text_part = text;
-		return this;
-	}
-
-	setHtml(html: string): Transaction {
-		this.html_part = html;
-		return this;
-	}
-
-	async send() {
-		const params = {
+	params(): RequestParamsTransaction {
+		return {
 			from: {
 				email: this.fromEmail,
 				name: this.fromName
@@ -58,11 +27,9 @@ export default class Transaction {
 			text_part: this.text_part,
 			html_part: this.html_part,
 		};
-		const res = await request
-			.post(this.url)
-			.send(params)
-			.set('Authorization', `Bearer ${Transaction.client?.token}`)
-			.set('Content-Type', 'application/json');
-		return res.body;
+	}
+
+	async send(url?: string, requestParams?: RequestParams): Promise<SuccessFormat> {
+		return super.req('post', this.url, this.params());
 	}
 }

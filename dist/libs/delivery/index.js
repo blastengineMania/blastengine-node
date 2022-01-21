@@ -4,9 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const transaction_1 = __importDefault(require("./transaction"));
+const base_1 = __importDefault(require("./transaction/base"));
 class Delivery {
     constructor() {
-        transaction_1.default.client = Delivery.client;
+        base_1.default.client = Delivery.client;
     }
     transaction() {
         return new transaction_1.default;
