@@ -61,6 +61,8 @@ type RequestParamsTransaction = {
 	html_part: string,
 };
 
+type Attachment = Blob | Buffer | string;
+
 type BEReturnType = Transaction | Bulk;
 
 type RequestParams = RequestParamsTransaction | RequestParamsBulkBegin | RequestParamsBulkUpdate | RequestParamsBulkCommit;

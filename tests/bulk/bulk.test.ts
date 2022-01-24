@@ -1,7 +1,6 @@
 import Client from '../../src';
 import config from '../config.json';
-import Bulk from '../../src/libs/delivery/transaction/bulk/';
-import { buildArgv } from 'jest-cli/build/cli';
+import Bulk from '../../src/libs/delivery/transaction/bulk';
 
 describe('Test of begin', () => {
 	let client: Client;
@@ -19,6 +18,7 @@ describe('Test of begin', () => {
 					.setText('メールの本文');
 				const res = await (bulk as Bulk).register();
 				expect(`${res.delivery_id}`).toMatch(/[0-9]+/);
+				await bulk.delete();
 			} catch (e) {
 				console.error({ e });
 				expect(true).toBe(false);
@@ -36,6 +36,7 @@ describe('Test of begin', () => {
 				bulk.setTo(config.to, {key: '__code1__', value: '値'});
 				const updateRes = await bulk.update();
 				expect(updateRes.delivery_id === bulk.delivery_id!);
+				await bulk.delete();
 			} catch (e) {
 				console.error({ e });
 				expect(true).toBe(false);

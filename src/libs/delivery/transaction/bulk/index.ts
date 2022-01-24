@@ -33,6 +33,12 @@ export default class Bulk extends Base {
 		return res;
 	}
 
+	async delete(): Promise<SuccessFormat> {
+		if (!this.delivery_id) throw 'Delivery id is not found.';
+		const url = `https://app.engn.jp/api/v1/deliveries/${this.delivery_id!}`;
+		const res = await this.req('delete', url);
+		return res;
+	}
 
 	setTo(email: string, insertCode?: InsertCode[] | InsertCode): Bulk {
 		const params: BulkUpdateTo = { email };

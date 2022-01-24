@@ -1,4 +1,4 @@
-import request, { SuperAgentRequest } from 'superagent';
+import request, { SuperAgent, SuperAgentRequest } from 'superagent';
 import Client from '../../../';
 import Bulk from './bulk/';
 import { ResponseError } from 'superagent';
@@ -12,7 +12,8 @@ export default class Base {
 	public text_part = '';
 	public html_part = '';
 	public url?: string;
-	
+	public attachments: Attachment[] = [];
+
 	setSubject(subject: string): BEReturnType {
 		this.subject = subject;
 		return this;
@@ -39,6 +40,11 @@ export default class Base {
 		return this;
 	}
 
+	addAttachment(file: Attachment): BEReturnType {
+		this.attachments.push(file);
+		return this;
+	}
+
 	getRequest(method: string, url: string): SuperAgentRequest {
 		switch (method.toUpperCase()) {
 			case 'GET':
@@ -56,19 +62,42 @@ export default class Base {
 		}
 	}
 
-	async req(method: string, url: string, params: RequestParams): Promise<SuccessFormat> {
+	async req(method: string, url: string, params?: RequestParams): Promise<SuccessFormat> {
 		try {
-			const request = this.getRequest(method, url)
-			const res = await request
-				.send(params)
-				.set('Authorization', `Bearer ${Base.client?.token}`)
-				.set('Content-Type', 'application/json');
-			return res.body as SuccessFormat;
+			const request = this.getRequest(method, url);
+			request
+				.set('Authorization', `Bearer ${Base.client?.token}`);
+			if (this.attachments.length > 0) {
+				const res = await this.sendAttachment(request, params);
+				return res.body as SuccessFormat;
+			} else {
+				const res = await this.sendJson(request, params);
+				return res.body as SuccessFormat;
+			}
 		} catch (e: any) {
+			console.error(e);
 			if ('response' in e) {
 				throw e.response.text;
 			}
 			throw e;
 		}
+	}
+
+	async sendJson(request: SuperAgentRequest, params?: RequestParams): Promise<SuperAgentRequest> {
+		return request
+			.send(params)
+			.set('Content-Type', 'application/json');
+	}
+
+	async sendAttachment(request: SuperAgentRequest, params?: RequestParams): Promise<SuperAgentRequest> {
+		for (const file of this.attachments) {
+			request.attach('file', file);
+		}
+		if (params) {
+			request
+				.attach('data', Buffer.from(JSON.stringify(params)), { contentType: 'application/json'});
+		}
+		return request
+			.type('form');
 	}
 }
