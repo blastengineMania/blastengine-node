@@ -1,30 +1,25 @@
 import crypto from 'crypto';
 import Delivery from './libs/delivery/';
+import Transaction from './libs/delivery/transaction';
 import Bulk from './libs/delivery/transaction/bulk';
+import Base from './libs/delivery/transaction/base';
 
 export default class Client {
-	userId = '';
-	apiKey = '';
-	token = '';
-
-	Delivery?: Delivery;
-	Bulk?: Bulk;
+	userId?: string;
+	apiKey?: string;
+	token?: string;
 
 	constructor(userId: string, apiKey: string) {
 		this.userId = userId;
 		this.apiKey = apiKey;
 		this.generateToken();
 		Delivery.client = this;
-		Bulk.client = this;
-		this.Delivery = new Delivery;
-		this.Bulk = new Bulk;
-	}
-
-	bluk(): Bulk {
-		return new Bulk;
+		Base.client = this;
 	}
 
 	generateToken() {
+		if (!this.userId) throw 'There is no userId';
+		if (!this.apiKey) throw 'There is no apiKey';
 		const str = `${this.userId}${this.apiKey}`;
 		const hashHex = crypto
 				.createHash('sha256')
@@ -35,3 +30,5 @@ export default class Client {
 				.toString('base64');
 	}
 }
+
+export { Bulk, Transaction };

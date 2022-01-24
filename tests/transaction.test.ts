@@ -1,16 +1,16 @@
-import Client from '../src/';
+import BlastEngine, { Transaction } from '../src/';
 import config from './config.json';
 import path from 'path';
 
 describe('Test of transaction', () => {
-	let client: Client;
+	let client: BlastEngine;
 	beforeAll(() => {
-		client = new Client(config.userId, config.apiKey);
+		client = new BlastEngine(config.userId, config.apiKey);
 	});
 
 	describe('Test as successful', () => {
 		test('Transaction successful.', async () => {
-			const transaction = client.Delivery!.transaction();
+			const transaction = new Transaction;
 			try {
 				const res = await transaction
 					.setFrom(config.from.email, config.from.name)
@@ -25,7 +25,7 @@ describe('Test of transaction', () => {
 		})
 
 		test('Transaction with attachment successful.', async () => {
-			const transaction = client.Delivery!.transaction();
+			const transaction = new Transaction;
 			try {
 				const res = await transaction
 					.setFrom(config.from.email, config.from.name)

@@ -6,10 +6,22 @@ blastengine is developer friendly email distribution service.
 
 ## Usage
 
+### Install
+
+```
+npm i blastengine
+```
+
+### Import
+
+```js
+import Blastengine, {Transaction, Bulk} from 'blastengine';
+```
+
 ### Initialize
 
 ```js
-const client = new Client(config.userId, config.apiKey);
+new Blastengine(config.userId, config.apiKey);
 ```
 
 ### Transaction email
@@ -17,7 +29,7 @@ const client = new Client(config.userId, config.apiKey);
 #### No attachment email
 
 ```js
-const transaction = client.Delivery!.transaction();
+const transaction = new Transaction;
 const res = await transaction
 	.setFrom(config.from.email, config.from.name)
 	.setSubject('Test subject')
@@ -32,7 +44,7 @@ console.log(res);
 #### With attachment email
 
 ```js
-const transaction = client.Delivery!.transaction();
+const transaction = new Transaction;
 const res = await transaction
 	.setFrom(config.from.email, config.from.name)
 	.setSubject('Test subject')
@@ -51,7 +63,7 @@ console.log(res);
 #### Create bulk email
 
 ```js
-const bulk = client.bluk();
+const bulk = new Bluk;
 bulk
 	.setFrom(config.from.email, config.from.name)
 	.setSubject('Test subject')

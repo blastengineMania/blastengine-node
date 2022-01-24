@@ -1,16 +1,15 @@
-import Client from '../../src';
+import BlastEngine, { Bulk } from '../../src';
 import config from '../config.json';
-import Bulk from '../../src/libs/delivery/transaction/bulk';
 
 describe('Test of begin', () => {
-	let client: Client;
+	let client: BlastEngine;
 	beforeAll(() => {
-		client = new Client(config.userId, config.apiKey);
+		client = new BlastEngine(config.userId, config.apiKey);
 	});
 
 	describe('Test as successful', () => {
 		test('Register successful.', async () => {
-			const bulk = client.bluk();
+			const bulk = new Bulk;
 			try {
 				bulk
 					.setFrom(config.from.email, config.from.name)
@@ -25,7 +24,7 @@ describe('Test of begin', () => {
 			}
 		})
 		test('Update successful.', async () => {
-			const bulk = client.bluk();
+			const bulk = new Bulk;
 			try {
 				bulk
 					.setFrom(config.from.email, config.from.name)
@@ -43,7 +42,7 @@ describe('Test of begin', () => {
 			}
 		});
 		test('Send bulk email', async () => {
-			const bulk = client.bluk();
+			const bulk = new Bulk;
 			try {
 				bulk
 					.setFrom(config.from.email, config.from.name)
