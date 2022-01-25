@@ -15,7 +15,9 @@ npm i blastengine
 ### Import
 
 ```js
-import Blastengine, {Transaction, Bulk} from 'blastengine';
+import { Blastengine, Transaction, Bulk } from 'blastengine';
+// or
+const { Blastengine, Transaction, Bulk } = require('blastengine');
 ```
 
 ### Initialize

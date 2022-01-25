@@ -50,6 +50,15 @@ class Bulk extends base_1.default {
             return res;
         });
     }
+    delete() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.delivery_id)
+                throw 'Delivery id is not found.';
+            const url = `https://app.engn.jp/api/v1/deliveries/${this.delivery_id}`;
+            const res = yield this.req('delete', url);
+            return res;
+        });
+    }
     setTo(email, insertCode) {
         const params = { email };
         if (insertCode) {

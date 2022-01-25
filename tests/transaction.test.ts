@@ -1,4 +1,4 @@
-import BlastEngine, { Transaction } from '../src/';
+import { BlastEngine, Transaction } from '../src/';
 import config from './config.json';
 import path from 'path';
 

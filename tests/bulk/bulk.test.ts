@@ -1,4 +1,4 @@
-import BlastEngine, { Bulk } from '../../src';
+import { BlastEngine, Bulk } from '../../src';
 import config from '../config.json';
 
 describe('Test of begin', () => {

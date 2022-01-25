@@ -1,10 +1,10 @@
 import request, { SuperAgent, SuperAgentRequest } from 'superagent';
-import Client from '../../../';
+import { BlastEngine } from '../../..';
 import Bulk from './bulk/';
 import { ResponseError } from 'superagent';
 
 export default class Base {
-	static client?: Client;
+	static client?: BlastEngine;
 	public fromName = '';
 	public fromEmail = '';
 	public subject = '';

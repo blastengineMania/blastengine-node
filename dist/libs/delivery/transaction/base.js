@@ -21,6 +21,7 @@ class Base {
         this.encode = 'UTF-8';
         this.text_part = '';
         this.html_part = '';
+        this.attachments = [];
     }
     setSubject(subject) {
         this.subject = subject;
@@ -41,6 +42,10 @@ class Base {
     }
     setHtml(html) {
         this.html_part = html;
+        return this;
+    }
+    addAttachment(file) {
+        this.attachments.push(file);
         return this;
     }
     getRequest(method, url) {
@@ -64,18 +69,44 @@ class Base {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const request = this.getRequest(method, url);
-                const res = yield request
-                    .send(params)
-                    .set('Authorization', `Bearer ${(_a = Base.client) === null || _a === void 0 ? void 0 : _a.token}`)
-                    .set('Content-Type', 'application/json');
-                return res.body;
+                request
+                    .set('Authorization', `Bearer ${(_a = Base.client) === null || _a === void 0 ? void 0 : _a.token}`);
+                if (this.attachments.length > 0) {
+                    const res = yield this.sendAttachment(request, params);
+                    return res.body;
+                }
+                else {
+                    const res = yield this.sendJson(request, params);
+                    return res.body;
+                }
             }
             catch (e) {
+                console.error(e);
                 if ('response' in e) {
                     throw e.response.text;
                 }
                 throw e;
             }
+        });
+    }
+    sendJson(request, params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return request
+                .send(params)
+                .set('Content-Type', 'application/json');
+        });
+    }
+    sendAttachment(request, params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            for (const file of this.attachments) {
+                request.attach('file', file);
+            }
+            if (params) {
+                request
+                    .attach('data', Buffer.from(JSON.stringify(params)), { contentType: 'application/json' });
+            }
+            return request
+                .type('form');
         });
     }
 }

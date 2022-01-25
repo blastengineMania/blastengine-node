@@ -4,7 +4,7 @@ import Transaction from './libs/delivery/transaction';
 import Bulk from './libs/delivery/transaction/bulk';
 import Base from './libs/delivery/transaction/base';
 
-export default class Client {
+class BlastEngine {
 	userId?: string;
 	apiKey?: string;
 	token?: string;
@@ -31,4 +31,4 @@ export default class Client {
 	}
 }
 
-export { Bulk, Transaction };
+export { BlastEngine, Bulk, Transaction };

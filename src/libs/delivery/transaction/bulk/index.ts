@@ -1,4 +1,4 @@
-import Client from '../../../../';
+import { BlastEngine } from '../../../../';
 import Base from '../base';
 import strftime from 'strftime';
 

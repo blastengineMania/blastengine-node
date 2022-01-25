@@ -1,6 +1,4 @@
 import request from 'superagent';
-import Client from '../../../';
-import Bulk from './bulk/';
 import Base from './base';
 
 export default class Transaction extends Base {
