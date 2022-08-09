@@ -22,6 +22,8 @@ type RequestParamsBulkBegin = {
 	encode: string,
 	text_part: string,
 	html_part: string,
+	attachments?: [Attachment],
+	file?: Attachment,
 };
 
 type InsertCode = {
@@ -32,6 +34,10 @@ type InsertCode = {
 type BulkUpdateTo = {
   email: string,
   insert_code?: InsertCode[],
+}
+
+type RequestParamsFile = {
+	file: Attachment,
 }
 
 type RequestParamsBulkUpdate = {
@@ -59,14 +65,29 @@ type RequestParamsTransaction = {
 	encode: string,
 	text_part: string,
 	html_part: string,
+	attachments?: [Attachment],
 };
+
+type RequestParamsBulkImport = {
+	file?: Attachment
+}
 
 type Attachment = Blob | Buffer | string;
 
 type BEReturnType = Transaction | Bulk;
 
-type RequestParams = RequestParamsTransaction | RequestParamsBulkBegin | RequestParamsBulkUpdate | RequestParamsBulkCommit;
+type RequestParams = RequestParamsTransaction | RequestParamsBulkBegin | RequestParamsBulkUpdate | RequestParamsBulkCommit | RequestParamsFile;
 
 type SuccessFormat = {
-	delivery_id: number
+	delivery_id?: number,
+	job_id?: number,
+};
+
+type JobResponseFormat = {
+	percentage: number,
+	status: string,
+	success_count: number,
+	failed_count: number,
+	total_count: number,
+	error_file_url: string,
 };

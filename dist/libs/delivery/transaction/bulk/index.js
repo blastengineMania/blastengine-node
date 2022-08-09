@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const base_1 = __importDefault(require("../base"));
 const strftime_1 = __importDefault(require("strftime"));
+const job_1 = __importDefault(require("./job"));
 class Bulk extends base_1.default {
     constructor() {
         super(...arguments);
@@ -21,18 +22,29 @@ class Bulk extends base_1.default {
     }
     register() {
         return __awaiter(this, void 0, void 0, function* () {
-            const url = 'https://app.engn.jp/api/v1/deliveries/bulk/begin';
-            const res = yield this.req('post', url, this.saveParams());
+            const url = '/deliveries/bulk/begin';
+            const res = yield this.request.send(Bulk.client.token, 'post', url, this.saveParams());
             this.delivery_id = res.delivery_id;
             return res;
+        });
+    }
+    import(filePath) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.delivery_id)
+                throw 'Delivery id is not found.';
+            const url = `/deliveries/${this.delivery_id}/emails/import`;
+            const res = yield this.request.send(Bulk.client.token, 'post', url, {
+                file: filePath
+            });
+            return new job_1.default(res.job_id);
         });
     }
     update() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.delivery_id)
                 throw 'Delivery id is not found.';
-            const url = `https://app.engn.jp/api/v1/deliveries/bulk/update/${this.delivery_id}`;
-            const res = yield this.req('put', url, this.updateParams());
+            const url = `/deliveries/bulk/update/${this.delivery_id}`;
+            const res = yield this.request.send(Bulk.client.token, 'put', url, this.updateParams());
             return res;
         });
     }
@@ -45,8 +57,8 @@ class Bulk extends base_1.default {
             this.date = date;
             if (!this.delivery_id)
                 throw 'Delivery id is not found.';
-            const url = `https://app.engn.jp/api/v1/deliveries/bulk/commit/${this.delivery_id}`;
-            const res = yield this.req('patch', url, this.commitParams());
+            const url = `/deliveries/bulk/commit/${this.delivery_id}`;
+            const res = yield this.request.send(Bulk.client.token, 'patch', url, this.commitParams());
             return res;
         });
     }
@@ -54,8 +66,8 @@ class Bulk extends base_1.default {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.delivery_id)
                 throw 'Delivery id is not found.';
-            const url = `https://app.engn.jp/api/v1/deliveries/${this.delivery_id}`;
-            const res = yield this.req('delete', url);
+            const url = `/deliveries/${this.delivery_id}`;
+            const res = yield this.request.send(Bulk.client.token, 'delete', url);
             return res;
         });
     }

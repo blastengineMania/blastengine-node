@@ -3,7 +3,7 @@ import Base from './base';
 
 export default class Transaction extends Base {
 	public to = '';
-	public url = 'https://app.engn.jp/api/v1/deliveries/transaction';
+	public url = '/deliveries/transaction';
 	
 	setTo(email: string | string[]): BEReturnType {
 		if (Array.isArray(email)) {
@@ -28,6 +28,6 @@ export default class Transaction extends Base {
 	}
 
 	async send(url?: string, requestParams?: RequestParams): Promise<SuccessFormat> {
-		return super.req('post', this.url, this.params());
+		return this.request.send(Transaction.client!.token!, 'post', this.url, this.params());
 	}
 }

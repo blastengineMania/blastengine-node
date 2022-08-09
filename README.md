@@ -15,15 +15,15 @@ npm i blastengine
 ### Import
 
 ```js
-import { Blastengine, Transaction, Bulk } from 'blastengine';
+import { BlastEngine, Transaction, Bulk } from 'blastengine';
 // or
-const { Blastengine, Transaction, Bulk } = require('blastengine');
+const { BlastEngine, Transaction, Bulk } = require('blastengine');
 ```
 
 ### Initialize
 
 ```js
-new Blastengine(config.userId, config.apiKey);
+new BlastEngine(config.userId, config.apiKey);
 ```
 
 ### Transaction email
@@ -83,6 +83,29 @@ bulk.setTo('test2@example.jp', {key: '__code1__', value: 'value2!'});
 const updateRes = await bulk.update();
 console.log(updateRes);
 // { delivery_id: 22 }
+```
+
+#### Upload delivery addresses by CSV file
+
+```js
+const job = await bulk.import(path.resolve('./path/to/csv.csv'));
+```
+
+##### Waiting CSV uploaded
+
+```js
+while (job.finished()) {
+	await job.get();
+	await new Promise((resolve) => setTimeout(resolve, 1000));
+}
+```
+
+##### Download CSV import report
+
+```js
+const zipBlob = await job.download();
+// or
+await job.download(path.resolve('./tests/result.zip'));
 ```
 
 #### Send bulk email

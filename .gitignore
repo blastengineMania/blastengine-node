@@ -2,3 +2,4 @@ tests/config.json
 .DS_Store
 node_modules/
 coverage/
+tests/result.zip

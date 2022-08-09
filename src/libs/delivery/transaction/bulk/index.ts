@@ -1,6 +1,6 @@
-import { BlastEngine } from '../../../../';
 import Base from '../base';
 import strftime from 'strftime';
+import Job from './job';
 
 export default class Bulk extends Base {
 	delivery_id?: number;
@@ -8,16 +8,25 @@ export default class Bulk extends Base {
 	date?: Date;
 
 	async register(): Promise<SuccessFormat> {
-		const url = 'https://app.engn.jp/api/v1/deliveries/bulk/begin';
-		const res = await this.req('post', url, this.saveParams());
+		const url = '/deliveries/bulk/begin';
+		const res = await this.request.send(Bulk.client!.token!, 'post', url, this.saveParams());
 		this.delivery_id = res.delivery_id;
 		return res;
 	}
 
+	async import(filePath: Attachment): Promise<Job> {
+		if (!this.delivery_id) throw 'Delivery id is not found.';
+		const url = `/deliveries/${this.delivery_id!}/emails/import`;
+		const res = await this.request.send(Bulk.client!.token!, 'post', url, {
+			file: filePath
+		});
+		return new Job(res.job_id!);
+	}
+
 	async update(): Promise<SuccessFormat> {
 		if (!this.delivery_id) throw 'Delivery id is not found.';
-		const url = `https://app.engn.jp/api/v1/deliveries/bulk/update/${this.delivery_id!}`;
-		const res = await this.req('put', url, this.updateParams());
+		const url = `/deliveries/bulk/update/${this.delivery_id!}`;
+		const res = await this.request.send(Bulk.client!.token!, 'put', url, this.updateParams());
 		return res;
 	}
 
@@ -28,15 +37,15 @@ export default class Bulk extends Base {
 		}
 		this.date = date;
 		if (!this.delivery_id) throw 'Delivery id is not found.';
-		const url = `https://app.engn.jp/api/v1/deliveries/bulk/commit/${this.delivery_id!}`;
-		const res = await this.req('patch', url, this.commitParams());
+		const url = `/deliveries/bulk/commit/${this.delivery_id!}`;
+		const res = await this.request.send(Bulk.client!.token!, 'patch', url, this.commitParams());
 		return res;
 	}
 
 	async delete(): Promise<SuccessFormat> {
 		if (!this.delivery_id) throw 'Delivery id is not found.';
-		const url = `https://app.engn.jp/api/v1/deliveries/${this.delivery_id!}`;
-		const res = await this.req('delete', url);
+		const url = `/deliveries/${this.delivery_id!}`;
+		const res = await this.request.send(Bulk.client!.token!, 'delete', url);
 		return res;
 	}
 

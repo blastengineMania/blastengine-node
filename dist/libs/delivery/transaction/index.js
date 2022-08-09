@@ -17,7 +17,7 @@ class Transaction extends base_1.default {
     constructor() {
         super(...arguments);
         this.to = '';
-        this.url = 'https://app.engn.jp/api/v1/deliveries/transaction';
+        this.url = '/deliveries/transaction';
     }
     setTo(email) {
         if (Array.isArray(email)) {
@@ -40,11 +40,8 @@ class Transaction extends base_1.default {
         };
     }
     send(url, requestParams) {
-        const _super = Object.create(null, {
-            req: { get: () => super.req }
-        });
         return __awaiter(this, void 0, void 0, function* () {
-            return _super.req.call(this, 'post', this.url, this.params());
+            return this.request.send(Transaction.client.token, 'post', this.url, this.params());
         });
     }
 }

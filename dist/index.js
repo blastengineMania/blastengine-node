@@ -11,6 +11,7 @@ exports.Transaction = transaction_1.default;
 const bulk_1 = __importDefault(require("./libs/delivery/transaction/bulk"));
 exports.Bulk = bulk_1.default;
 const base_1 = __importDefault(require("./libs/delivery/transaction/base"));
+const job_1 = __importDefault(require("./libs/delivery/transaction/bulk/job"));
 class BlastEngine {
     constructor(userId, apiKey) {
         this.userId = userId;
@@ -18,6 +19,7 @@ class BlastEngine {
         this.generateToken();
         delivery_1.default.client = this;
         base_1.default.client = this;
+        job_1.default.client = this;
     }
     generateToken() {
         if (!this.userId)

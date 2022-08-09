@@ -3,7 +3,7 @@ import Delivery from './libs/delivery/';
 import Transaction from './libs/delivery/transaction';
 import Bulk from './libs/delivery/transaction/bulk';
 import Base from './libs/delivery/transaction/base';
-
+import Job from './libs/delivery/transaction/bulk/job';
 class BlastEngine {
 	userId?: string;
 	apiKey?: string;
@@ -15,6 +15,7 @@ class BlastEngine {
 		this.generateToken();
 		Delivery.client = this;
 		Base.client = this;
+		Job.client = this;
 	}
 
 	generateToken() {
