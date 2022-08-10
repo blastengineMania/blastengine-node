@@ -41,7 +41,7 @@ class Transaction extends base_1.default {
     }
     send(url, requestParams) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.request.send(Transaction.client.token, 'post', this.url, this.params());
+            return Transaction.request.send('post', this.url, this.params());
         });
     }
 }

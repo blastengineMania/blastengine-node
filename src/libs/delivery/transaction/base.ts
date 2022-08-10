@@ -1,9 +1,9 @@
 import { BlastEngine } from '../../..';
 import Bulk from './bulk/';
 import BERequest from '../../request';
+import BEObject from '../../object';
 
-export default class Base {
-	static client?: BlastEngine;
+export default class Base extends BEObject {
 	public fromName = '';
 	public fromEmail = '';
 	public subject = '';
@@ -13,10 +13,9 @@ export default class Base {
 	public url?: string;
 	public attachments: Attachment[] = [];
 	public file?: Attachment;
-	public request: BERequest;
 
 	constructor() {
-		this.request = new BERequest();
+		super();
 	}
 	
 	setSubject(subject: string): BEReturnType {

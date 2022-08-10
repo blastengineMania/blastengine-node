@@ -12,20 +12,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const request_1 = __importDefault(require("../../../request"));
 const fs_1 = __importDefault(require("fs"));
 const util_1 = require("util");
-class Job {
+const object_1 = __importDefault(require("../../../object"));
+class Job extends object_1.default {
     constructor(id) {
+        super();
         this.id = id;
-        this.request = new request_1.default();
     }
     get() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.id)
                 throw 'Job id is not found.';
             const url = `/deliveries/-/emails/import/${this.id}`;
-            const res = yield this.request.send(Job.client.token, 'get', url);
+            const res = yield Job.request.send('get', url);
             this.total_count = res.total_count;
             this.percentage = res.percentage;
             this.success_count = res.success_count;
@@ -39,7 +39,7 @@ class Job {
             if (!this.id)
                 throw 'Job id is not found.';
             const url = `/deliveries/-/emails/import/${this.id}/errorinfo/download`;
-            const buffer = yield this.request.send(Job.client.token, 'get', url);
+            const buffer = yield Job.request.send('get', url);
             if (filePath) {
                 yield (0, util_1.promisify)(fs_1.default.writeFile)(filePath, buffer);
             }

@@ -5,6 +5,7 @@ describe('Test of begin', () => {
 	let client: BlastEngine;
 	beforeAll(async () => {
 		client = new BlastEngine(config.userId, config.apiKey);
+		/*
 		for (let i = 300; i <= 350; i++) {
 			const bulk = new Bulk;
 			bulk.delivery_id = i;
@@ -14,6 +15,7 @@ describe('Test of begin', () => {
 			} catch (e) {
 			}
 		}
+		*/
 	});
 
 	describe('Test as successful', () => {

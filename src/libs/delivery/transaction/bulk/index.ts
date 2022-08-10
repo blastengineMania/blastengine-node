@@ -9,7 +9,7 @@ export default class Bulk extends Base {
 
 	async register(): Promise<SuccessFormat> {
 		const url = '/deliveries/bulk/begin';
-		const res = await this.request.send(Bulk.client!.token!, 'post', url, this.saveParams());
+		const res = await Bulk.request.send('post', url, this.saveParams());
 		this.delivery_id = res.delivery_id;
 		return res;
 	}
@@ -17,7 +17,7 @@ export default class Bulk extends Base {
 	async import(filePath: Attachment): Promise<Job> {
 		if (!this.delivery_id) throw 'Delivery id is not found.';
 		const url = `/deliveries/${this.delivery_id!}/emails/import`;
-		const res = await this.request.send(Bulk.client!.token!, 'post', url, {
+		const res = await Bulk.request.send('post', url, {
 			file: filePath
 		});
 		return new Job(res.job_id!);
@@ -26,26 +26,24 @@ export default class Bulk extends Base {
 	async update(): Promise<SuccessFormat> {
 		if (!this.delivery_id) throw 'Delivery id is not found.';
 		const url = `/deliveries/bulk/update/${this.delivery_id!}`;
-		const res = await this.request.send(Bulk.client!.token!, 'put', url, this.updateParams());
+		const res = await Bulk.request.send('put', url, this.updateParams());
 		return res;
 	}
 
 	async send(date?: Date): Promise<SuccessFormat> {
-		if (!date) {
-			date = new Date;
-			date.setMinutes(date.getMinutes() + 1);
-		}
-		this.date = date;
 		if (!this.delivery_id) throw 'Delivery id is not found.';
-		const url = `/deliveries/bulk/commit/${this.delivery_id!}`;
-		const res = await this.request.send(Bulk.client!.token!, 'patch', url, this.commitParams());
+		const url = date ? 
+			`/deliveries/bulk/commit/${this.delivery_id!}` :
+			`/deliveries/bulk/commit/${this.delivery_id}/immediate`;
+		this.date = date;
+		const res = await Bulk.request.send('patch', url, this.commitParams());
 		return res;
 	}
 
 	async delete(): Promise<SuccessFormat> {
 		if (!this.delivery_id) throw 'Delivery id is not found.';
 		const url = `/deliveries/${this.delivery_id!}`;
-		const res = await this.request.send(Bulk.client!.token!, 'delete', url);
+		const res = await Bulk.request.send('delete', url);
 		return res;
 	}
 
@@ -89,6 +87,7 @@ export default class Bulk extends Base {
 	}
 
 	commitParams(): RequestParamsBulkCommit {
+		if (!this.date) return {};
 		strftime.timezone(9 * 60)
 		return {
 			reservation_time: strftime('%FT%T%z', this.date!).replace('+0900', '+09:00')

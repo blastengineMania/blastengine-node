@@ -1,9 +1,11 @@
 import crypto from 'crypto';
-import Delivery from './libs/delivery/';
 import Transaction from './libs/delivery/transaction';
 import Bulk from './libs/delivery/transaction/bulk';
 import Base from './libs/delivery/transaction/base';
 import Job from './libs/delivery/transaction/bulk/job';
+import Usage from './libs/usage';
+import BERequest from './libs/request';
+
 class BlastEngine {
 	userId?: string;
 	apiKey?: string;
@@ -13,9 +15,10 @@ class BlastEngine {
 		this.userId = userId;
 		this.apiKey = apiKey;
 		this.generateToken();
-		Delivery.client = this;
-		Base.client = this;
-		Job.client = this;
+		const request = new BERequest(this.token!);
+		Base.request = request;
+		Job.request = request;
+		Usage.request = request;
 	}
 
 	generateToken() {
@@ -32,4 +35,4 @@ class BlastEngine {
 	}
 }
 
-export { BlastEngine, Bulk, Transaction };
+export { BlastEngine, Bulk, Transaction, Usage };

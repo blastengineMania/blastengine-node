@@ -2,12 +2,10 @@ import { BlastEngine } from '../../../..';
 import BERequest from '../../../request';
 import fs from 'fs';
 import { promisify } from 'util';
+import BEObject from '../../../object';
 
-export default class Job {
-	static client: BlastEngine;
-
+export default class Job extends BEObject {
 	public id: number;
-	public request: BERequest;
 	public total_count?: number;
   public percentage?: number;
   public success_count?: number;
@@ -15,14 +13,14 @@ export default class Job {
   public status?: string;
 
 	constructor(id: number) {
+		super();
 		this.id = id;
-		this.request = new BERequest();
 	}
 
 	async get(): Promise<JobResponseFormat> {
 		if (!this.id) throw 'Job id is not found.';
 		const url = `/deliveries/-/emails/import/${this.id}`;
-		const res = await this.request.send(Job.client!.token!, 'get', url) as JobResponseFormat;
+		const res = await Job.request.send('get', url) as JobResponseFormat;
 		this.total_count = res.total_count;
 		this.percentage = res.percentage;
 		this.success_count = res.success_count;
@@ -34,7 +32,7 @@ export default class Job {
 	async download(filePath?: string): Promise<Buffer> {
 		if (!this.id) throw 'Job id is not found.';
 		const url = `/deliveries/-/emails/import/${this.id}/errorinfo/download`;
-		const buffer = await this.request.send(Job.client!.token!, 'get', url) as Buffer;
+		const buffer = await Job.request.send('get', url) as Buffer;
 		if (filePath) {
 			await promisify(fs.writeFile)(filePath, buffer);
 		}

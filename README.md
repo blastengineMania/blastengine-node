@@ -123,6 +123,34 @@ const deleteRes = await bulk.delete();
 // { delivery_id: 22 }
 ```
 
+### Usage
+
+#### Get multiple usages
+
+```ts
+const usages = await Usage.get(3);
+const usage = usages[0];
+usage.month // -> 202208
+usage.current // ->  44
+usage.remaining // ->  9956
+usage.update_time // ->  undefined
+usage.plan_id // ->  'be-plan-10000
+```
+
+#### Get usage detail
+
+```ts
+const usages = await Usage.get(3);
+const usage = usages[0];
+await usage.get();
+```
+
+#### Get latest usage
+
+```ts
+const usage = await Usage.getLatest();
+```
+
 ### License
 
 MIT.

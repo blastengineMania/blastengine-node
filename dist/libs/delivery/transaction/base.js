@@ -3,9 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const request_1 = __importDefault(require("../../request"));
-class Base {
+const object_1 = __importDefault(require("../../object"));
+class Base extends object_1.default {
     constructor() {
+        super();
         this.fromName = '';
         this.fromEmail = '';
         this.subject = '';
@@ -13,7 +14,6 @@ class Base {
         this.text_part = '';
         this.html_part = '';
         this.attachments = [];
-        this.request = new request_1.default();
     }
     setSubject(subject) {
         this.subject = subject;

@@ -2,6 +2,12 @@ import { BlastEngine } from '../';
 import request, { SuperAgent, SuperAgentRequest, ResponseError } from 'superagent';
 
 export default class BERequest {
+	public token: string;
+
+	constructor(token: string) {
+		this.token = token;
+	}
+
 	getRequest(method: string, url: string): SuperAgentRequest {
 		switch (method.toUpperCase()) {
 			case 'GET':
@@ -28,17 +34,16 @@ export default class BERequest {
 		return undefined;
 	}
 
-	async send(token: string, method: string, path: string, params?: RequestParams): Promise<SuccessFormat> {
+	async send(method: string, path: string, params?: RequestParams): Promise<SuccessFormat> {
 		try {
 			const request = this.getRequest(method, `https://app.engn.jp/api/v1${path}`);
 			request
-				.set('Authorization', `Bearer ${token}`);
+				.set('Authorization', `Bearer ${this.token}`);
 			const attachments = this.hasAttachment(params);
 			if (attachments) {
 				const res = await this.sendAttachment(request, params as RequestParamsTransaction);
 				return res.body as SuccessFormat;
 			}
-
 			if (params && 'file' in params) {
 				// Upload Email
 				const res = await this.sendFile(request, params!.file!);
@@ -57,6 +62,10 @@ export default class BERequest {
 	}
 
 	async sendJson(request: SuperAgentRequest, params?: RequestParams): Promise<SuperAgentRequest> {
+		if (request.method.toUpperCase() === 'GET') {
+			const qs = new URLSearchParams(params as any);
+			request.query(qs.toString());
+		}
 		return request
 			.send(params)
 			.set('Content-Type', 'application/json');

@@ -1,4 +1,3 @@
-import request from 'superagent';
 import Base from './base';
 
 export default class Transaction extends Base {
@@ -28,6 +27,6 @@ export default class Transaction extends Base {
 	}
 
 	async send(url?: string, requestParams?: RequestParams): Promise<SuccessFormat> {
-		return this.request.send(Transaction.client!.token!, 'post', this.url, this.params());
+		return Transaction.request.send('post', this.url, this.params());
 	}
 }

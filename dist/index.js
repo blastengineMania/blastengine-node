@@ -3,23 +3,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Transaction = exports.Bulk = exports.BlastEngine = void 0;
+exports.Usage = exports.Transaction = exports.Bulk = exports.BlastEngine = void 0;
 const crypto_1 = __importDefault(require("crypto"));
-const delivery_1 = __importDefault(require("./libs/delivery/"));
 const transaction_1 = __importDefault(require("./libs/delivery/transaction"));
 exports.Transaction = transaction_1.default;
 const bulk_1 = __importDefault(require("./libs/delivery/transaction/bulk"));
 exports.Bulk = bulk_1.default;
 const base_1 = __importDefault(require("./libs/delivery/transaction/base"));
 const job_1 = __importDefault(require("./libs/delivery/transaction/bulk/job"));
+const usage_1 = __importDefault(require("./libs/usage"));
+exports.Usage = usage_1.default;
+const request_1 = __importDefault(require("./libs/request"));
 class BlastEngine {
     constructor(userId, apiKey) {
         this.userId = userId;
         this.apiKey = apiKey;
         this.generateToken();
-        delivery_1.default.client = this;
-        base_1.default.client = this;
-        job_1.default.client = this;
+        const request = new request_1.default(this.token);
+        base_1.default.request = request;
+        job_1.default.request = request;
+        usage_1.default.request = request;
     }
     generateToken() {
         if (!this.userId)

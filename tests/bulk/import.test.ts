@@ -2,6 +2,7 @@ import { BlastEngine, Bulk } from '../../src';
 import path from 'path';
 import config from '../config.json';
 
+jest.setTimeout(30000);
 describe('Test of begin', () => {
 	let client: BlastEngine;
 	beforeAll(() => {
@@ -10,7 +11,6 @@ describe('Test of begin', () => {
 
 	describe('Test as successful', () => {
 		test('Register successful.', async () => {
-			jest.setTimeout(30000);
 			const bulk = new Bulk;
 			try {
 				bulk
@@ -22,7 +22,7 @@ describe('Test of begin', () => {
 				const job = await bulk.import(path.resolve('./tests/mail.csv'));
 				await new Promise((resolve) => setTimeout(resolve, 3000));
 				for (let i = 1; i <= 5; i++) {
-					console.log(await job.get());
+					await job.get();
 					if (job.finished()) {
 						await job.download(path.resolve('./tests/result.zip'));
 						break;

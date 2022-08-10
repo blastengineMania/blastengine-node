@@ -23,7 +23,7 @@ class Bulk extends base_1.default {
     register() {
         return __awaiter(this, void 0, void 0, function* () {
             const url = '/deliveries/bulk/begin';
-            const res = yield this.request.send(Bulk.client.token, 'post', url, this.saveParams());
+            const res = yield Bulk.request.send('post', url, this.saveParams());
             this.delivery_id = res.delivery_id;
             return res;
         });
@@ -33,7 +33,7 @@ class Bulk extends base_1.default {
             if (!this.delivery_id)
                 throw 'Delivery id is not found.';
             const url = `/deliveries/${this.delivery_id}/emails/import`;
-            const res = yield this.request.send(Bulk.client.token, 'post', url, {
+            const res = yield Bulk.request.send('post', url, {
                 file: filePath
             });
             return new job_1.default(res.job_id);
@@ -44,21 +44,19 @@ class Bulk extends base_1.default {
             if (!this.delivery_id)
                 throw 'Delivery id is not found.';
             const url = `/deliveries/bulk/update/${this.delivery_id}`;
-            const res = yield this.request.send(Bulk.client.token, 'put', url, this.updateParams());
+            const res = yield Bulk.request.send('put', url, this.updateParams());
             return res;
         });
     }
     send(date) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!date) {
-                date = new Date;
-                date.setMinutes(date.getMinutes() + 1);
-            }
-            this.date = date;
             if (!this.delivery_id)
                 throw 'Delivery id is not found.';
-            const url = `/deliveries/bulk/commit/${this.delivery_id}`;
-            const res = yield this.request.send(Bulk.client.token, 'patch', url, this.commitParams());
+            const url = date ?
+                `/deliveries/bulk/commit/${this.delivery_id}` :
+                `/deliveries/bulk/commit/${this.delivery_id}/immediate`;
+            this.date = date;
+            const res = yield Bulk.request.send('patch', url, this.commitParams());
             return res;
         });
     }
@@ -67,7 +65,7 @@ class Bulk extends base_1.default {
             if (!this.delivery_id)
                 throw 'Delivery id is not found.';
             const url = `/deliveries/${this.delivery_id}`;
-            const res = yield this.request.send(Bulk.client.token, 'delete', url);
+            const res = yield Bulk.request.send('delete', url);
             return res;
         });
     }
@@ -109,6 +107,8 @@ class Bulk extends base_1.default {
         };
     }
     commitParams() {
+        if (!this.date)
+            return {};
         strftime_1.default.timezone(9 * 60);
         return {
             reservation_time: (0, strftime_1.default)('%FT%T%z', this.date).replace('+0900', '+09:00')

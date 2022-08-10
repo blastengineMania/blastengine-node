@@ -14,6 +14,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const superagent_1 = __importDefault(require("superagent"));
 class BERequest {
+    constructor(token) {
+        this.token = token;
+    }
     getRequest(method, url) {
         switch (method.toUpperCase()) {
             case 'GET':
@@ -40,12 +43,12 @@ class BERequest {
         }
         return undefined;
     }
-    send(token, method, path, params) {
+    send(method, path, params) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const request = this.getRequest(method, `https://app.engn.jp/api/v1${path}`);
                 request
-                    .set('Authorization', `Bearer ${token}`);
+                    .set('Authorization', `Bearer ${this.token}`);
                 const attachments = this.hasAttachment(params);
                 if (attachments) {
                     const res = yield this.sendAttachment(request, params);
@@ -72,6 +75,10 @@ class BERequest {
     }
     sendJson(request, params) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (request.method.toUpperCase() === 'GET') {
+                const qs = new URLSearchParams(params);
+                request.query(qs.toString());
+            }
             return request
                 .send(params)
                 .set('Content-Type', 'application/json');

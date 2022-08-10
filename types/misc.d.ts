@@ -36,8 +36,24 @@ type BulkUpdateTo = {
   insert_code?: InsertCode[],
 }
 
+type UsageResponseDataFormat = {
+	month: number;
+	current: number;
+	remaining: number;
+	update_time: string;
+	plan_id: string;
+}
+
+type UsageResponseFormat = {
+	data: UsageResponseDataFormat[];
+}
+
 type RequestParamsFile = {
 	file: Attachment,
+}
+
+type RequestParamsUsage = {
+	month_ago: number,
 }
 
 type RequestParamsBulkUpdate = {
@@ -52,7 +68,7 @@ type RequestParamsBulkUpdate = {
 };
 
 type RequestParamsBulkCommit = {
-  reservation_time: string,
+  reservation_time?: string,
 }
 
 type RequestParamsTransaction = {
@@ -76,7 +92,12 @@ type Attachment = Blob | Buffer | string;
 
 type BEReturnType = Transaction | Bulk;
 
-type RequestParams = RequestParamsTransaction | RequestParamsBulkBegin | RequestParamsBulkUpdate | RequestParamsBulkCommit | RequestParamsFile;
+type RequestParams = RequestParamsTransaction | 
+	RequestParamsBulkBegin |
+	RequestParamsBulkUpdate |
+	RequestParamsBulkCommit |
+	RequestParamsFile |
+	RequestParamsUsage;
 
 type SuccessFormat = {
 	delivery_id?: number,
