@@ -20,9 +20,6 @@ class Transaction extends base_1.default {
         this.url = '/deliveries/transaction';
     }
     setTo(email) {
-        if (Array.isArray(email)) {
-            email = email.join(',');
-        }
         this.to = email;
         return this;
     }

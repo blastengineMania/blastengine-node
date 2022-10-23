@@ -4,10 +4,7 @@ export default class Transaction extends Base {
 	public to = '';
 	public url = '/deliveries/transaction';
 	
-	setTo(email: string | string[]): BEReturnType {
-		if (Array.isArray(email)) {
-			email = email.join(',');
-		}
+	setTo(email: string): BEReturnType {
 		this.to = email;
 		return this;
 	}
