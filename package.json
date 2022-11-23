@@ -1,11 +1,11 @@
 {
   "name": "blastengine",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
     "test": "jest",
-    "watch": "tsc -w",
+    "watch": "tsc -d -w",
     "build": "tsc"
   },
   "keywords": [],
@@ -23,6 +23,7 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
+    "jszip": "^3.10.1",
     "strftime": "^0.10.1",
     "superagent": "^7.0.2"
   }

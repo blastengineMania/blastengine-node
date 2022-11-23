@@ -1,5 +1,4 @@
-import { BlastEngine } from '../';
-import request, { SuperAgent, SuperAgentRequest, ResponseError } from 'superagent';
+import request, { SuperAgentRequest } from 'superagent';
 
 export default class BERequest {
 	public token: string;
@@ -53,7 +52,6 @@ export default class BERequest {
 				return res.body as SuccessFormat;
 			}
 		} catch (e: any) {
-			console.error(e);
 			if ('response' in e) {
 				throw e.response.text;
 			}

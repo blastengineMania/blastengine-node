@@ -1,5 +1,5 @@
-import Transaction from './libs/delivery/transaction';
-import Bulk from './libs/delivery/transaction/bulk';
+import Transaction from './libs/transaction';
+import Bulk from './libs/bulk';
 import Usage from './libs/usage';
 declare class BlastEngine {
     userId?: string;

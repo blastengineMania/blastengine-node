@@ -1,10 +1,9 @@
 import crypto from 'crypto';
-import Transaction from './libs/delivery/transaction';
-import Bulk from './libs/delivery/transaction/bulk';
-import Base from './libs/delivery/transaction/base';
-import Job from './libs/delivery/transaction/bulk/job';
+import Transaction from './libs/transaction';
+import Bulk from './libs/bulk';
 import Usage from './libs/usage';
 import BERequest from './libs/request';
+import BEObject from './libs/object';
 
 class BlastEngine {
 	userId?: string;
@@ -16,9 +15,7 @@ class BlastEngine {
 		this.apiKey = apiKey;
 		this.generateToken();
 		const request = new BERequest(this.token!);
-		Base.request = request;
-		Job.request = request;
-		Usage.request = request;
+		BEObject.request = request;
 	}
 
 	generateToken() {

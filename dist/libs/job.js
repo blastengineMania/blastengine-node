@@ -12,9 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs_1 = __importDefault(require("fs"));
-const util_1 = require("util");
-const object_1 = __importDefault(require("../../../object"));
+const object_1 = __importDefault(require("./object"));
+const jszip_1 = __importDefault(require("jszip"));
 class Job extends object_1.default {
     constructor(id) {
         super();
@@ -34,16 +33,37 @@ class Job extends object_1.default {
             return res;
         });
     }
-    download(filePath) {
+    isError() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const report = yield this.download();
+            return report !== '';
+        });
+    }
+    download() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.id)
                 throw 'Job id is not found.';
+            if (this.report)
+                return this.report;
             const url = `/deliveries/-/emails/import/${this.id}/errorinfo/download`;
-            const buffer = yield Job.request.send('get', url);
-            if (filePath) {
-                yield (0, util_1.promisify)(fs_1.default.writeFile)(filePath, buffer);
+            try {
+                const buffer = yield Job.request.send('get', url);
+                const jsZip = yield jszip_1.default.loadAsync(buffer);
+                const fileName = Object.keys(jsZip.files)[0];
+                const zipObject = jsZip.files[fileName];
+                this.report = yield zipObject.async('text');
+                return this.report;
             }
-            return buffer;
+            catch (e) {
+                const error = JSON.parse(e);
+                if (error &&
+                    error.error_messages &&
+                    error.error_messages.main &&
+                    error.error_messages.main[0] === 'no data found.') {
+                    return '';
+                }
+                throw e;
+            }
         });
     }
     finished() {

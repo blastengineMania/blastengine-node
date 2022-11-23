@@ -1,9 +1,9 @@
-import Base from '../base';
+import Base from './base';
 import strftime from 'strftime';
 import Job from './job';
+import Email from './email';
 
 export default class Bulk extends Base {
-	delivery_id?: number;
 	to: BulkUpdateTo[] = [];
 	date?: Date;
 
@@ -45,6 +45,18 @@ export default class Bulk extends Base {
 		const url = `/deliveries/${this.delivery_id!}`;
 		const res = await Bulk.request.send('delete', url);
 		return res;
+	}
+
+	async cancel(): Promise<SuccessFormat> {
+		if (!this.delivery_id) throw 'Delivery id is not found.';
+		const url = `/deliveries/${this.delivery_id!}/cancel`;
+		const res = await Bulk.request.send('patch', url);
+		return res;
+	}
+
+	email(): Email {
+		if (!this.delivery_id) throw 'Delivery id is not found.';
+		return new Email(this.delivery_id!);
 	}
 
 	setTo(email: string, insertCode?: InsertCode[] | InsertCode): Bulk {

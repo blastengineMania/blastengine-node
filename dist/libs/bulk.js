@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const base_1 = __importDefault(require("../base"));
+const base_1 = __importDefault(require("./base"));
 const strftime_1 = __importDefault(require("strftime"));
 const job_1 = __importDefault(require("./job"));
+const email_1 = __importDefault(require("./email"));
 class Bulk extends base_1.default {
     constructor() {
         super(...arguments);
@@ -68,6 +69,20 @@ class Bulk extends base_1.default {
             const res = yield Bulk.request.send('delete', url);
             return res;
         });
+    }
+    cancel() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.delivery_id)
+                throw 'Delivery id is not found.';
+            const url = `/deliveries/${this.delivery_id}/cancel`;
+            const res = yield Bulk.request.send('patch', url);
+            return res;
+        });
+    }
+    email() {
+        if (!this.delivery_id)
+            throw 'Delivery id is not found.';
+        return new email_1.default(this.delivery_id);
     }
     setTo(email, insertCode) {
         const params = { email };

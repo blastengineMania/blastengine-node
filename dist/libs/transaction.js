@@ -38,7 +38,9 @@ class Transaction extends base_1.default {
     }
     send(url, requestParams) {
         return __awaiter(this, void 0, void 0, function* () {
-            return Transaction.request.send('post', this.url, this.params());
+            const res = yield Transaction.request.send('post', this.url, this.params());
+            this.delivery_id = res.delivery_id;
+            return res;
         });
     }
 }

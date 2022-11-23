@@ -24,6 +24,8 @@ export default class Transaction extends Base {
 	}
 
 	async send(url?: string, requestParams?: RequestParams): Promise<SuccessFormat> {
-		return Transaction.request.send('post', this.url, this.params());
+		const res = await Transaction.request.send('post', this.url, this.params());
+		this.delivery_id = res.delivery_id;
+		return res;
 	}
 }

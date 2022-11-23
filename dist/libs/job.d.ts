@@ -1,5 +1,4 @@
-/// <reference types="node" />
-import BEObject from '../../../object';
+import BEObject from './object';
 export default class Job extends BEObject {
     id: number;
     total_count?: number;
@@ -7,8 +6,10 @@ export default class Job extends BEObject {
     success_count?: number;
     failed_count?: number;
     status?: string;
+    report?: string;
     constructor(id: number);
     get(): Promise<JobResponseFormat>;
-    download(filePath?: string): Promise<Buffer>;
+    isError(): Promise<boolean>;
+    download(): Promise<string>;
     finished(): boolean;
 }

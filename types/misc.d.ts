@@ -97,7 +97,8 @@ type RequestParams = RequestParamsTransaction |
 	RequestParamsBulkUpdate |
 	RequestParamsBulkCommit |
 	RequestParamsFile |
-	RequestParamsUsage;
+	RequestParamsUsage |
+	RequestParamsEmailCreate;
 
 type SuccessFormat = {
 	delivery_id?: number,
@@ -112,3 +113,52 @@ type JobResponseFormat = {
 	total_count: number,
 	error_file_url: string,
 };
+
+type GetResponseFormat = {
+  delivery_id: number,
+  from: {
+		email: string,
+		name: string,
+	},
+  delivery_type: string,
+  status: string,
+  subject: string,
+  total_count: number,
+  sent_count: number,
+  drop_count: number,
+  hard_error_count: number,
+  soft_error_count: number,
+  open_count: number,
+  text_part: string,
+  html_part: string,
+  attaches: [any],
+  delivery_time: string?,
+  reservation_time: string?,
+  created_time: string,
+  updated_time: string,
+}
+
+type GetEmailResponseFormat = {
+	email_id: number,
+	email: string,
+	delivery_id: number,
+	insert_code: [InsertCode],
+	created_time: string,
+	updated_time: string,
+}
+
+type RequestParamsEmailCreate = {
+	email: string,
+	insert_code: {[key: string]: string}[],
+}
+
+type CreateEmailResponseFormat = {
+	email_id: number,
+}
+
+type GetReportResponseFormat = {
+	percentage: number,
+	status: string,
+	total_count: number,
+	mail_open_file_url: string,
+}

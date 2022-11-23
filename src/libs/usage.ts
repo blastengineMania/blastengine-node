@@ -1,6 +1,4 @@
-import { BlastEngine } from "../..";
-import BERequest from "../request";
-import BEObject from "../object";
+import BEObject from "./object";
 export default class Usage extends BEObject{
 	public month?: number;
 	public current?: number;

@@ -1,5 +1,7 @@
-import BEObject from '../../object';
+import BEObject from './object';
+import Report from './report';
 export default class Base extends BEObject {
+    delivery_id?: number;
     fromName: string;
     fromEmail: string;
     subject: string;
@@ -9,6 +11,18 @@ export default class Base extends BEObject {
     url?: string;
     attachments: Attachment[];
     file?: Attachment;
+    delivery_type?: string;
+    status?: string;
+    total_count?: number;
+    sent_count?: number;
+    drop_count?: number;
+    hard_error_count?: number;
+    soft_error_count?: number;
+    open_count?: number;
+    delivery_time?: Date;
+    reservation_time?: Date;
+    created_time?: Date;
+    updated_time?: Date;
     constructor();
     setSubject(subject: string): BEReturnType;
     setFrom(email: string, name?: string): BEReturnType;
@@ -16,4 +30,6 @@ export default class Base extends BEObject {
     setText(text: string): BEReturnType;
     setHtml(html: string): BEReturnType;
     addAttachment(file: Attachment): BEReturnType;
+    get(): Promise<void>;
+    report(): Report;
 }

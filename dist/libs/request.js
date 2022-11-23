@@ -65,7 +65,6 @@ class BERequest {
                 }
             }
             catch (e) {
-                console.error(e);
                 if ('response' in e) {
                     throw e.response.text;
                 }

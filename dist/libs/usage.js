@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const object_1 = __importDefault(require("../object"));
+const object_1 = __importDefault(require("./object"));
 class Usage extends object_1.default {
     constructor(params) {
         super();

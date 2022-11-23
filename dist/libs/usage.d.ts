@@ -1,4 +1,4 @@
-import BEObject from "../object";
+import BEObject from "./object";
 export default class Usage extends BEObject {
     month?: number;
     current?: number;
