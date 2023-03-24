@@ -24,7 +24,7 @@ describe('Test of begin', () => {
 				for (let i = 1; i <= 5; i++) {
 					await job.get();
 					if (job.finished()) {
-						await job.download(path.resolve('./tests/result.zip'));
+						await job.download();
 						break;
 					}
 					await new Promise((resolve) => setTimeout(resolve, 100));

@@ -162,3 +162,11 @@ type GetReportResponseFormat = {
 	total_count: number,
 	mail_open_file_url: string,
 }
+
+
+type GetErrorReportResponseFormat = {
+	percentage: number,
+	status: string,
+	total_count: number,
+	error_file_url: string,
+}

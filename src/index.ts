@@ -4,6 +4,7 @@ import Bulk from './libs/bulk';
 import Usage from './libs/usage';
 import BERequest from './libs/request';
 import BEObject from './libs/object';
+import ErrorReport from './libs/error_report';
 
 class BlastEngine {
 	userId?: string;
@@ -32,4 +33,4 @@ class BlastEngine {
 	}
 }
 
-export { BlastEngine, Bulk, Transaction, Usage };
+export { BlastEngine, Bulk, Transaction, Usage, ErrorReport };

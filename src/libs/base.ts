@@ -1,6 +1,7 @@
 import Transaction from './transaction';
 import BEObject from './object';
 import Report from './report';
+import ErrorReport from './error_report';
 
 export default class Base extends BEObject {
 	delivery_id?: number;
