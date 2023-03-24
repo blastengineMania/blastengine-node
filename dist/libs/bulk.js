@@ -16,6 +16,9 @@ const base_1 = __importDefault(require("./base"));
 const strftime_1 = __importDefault(require("strftime"));
 const job_1 = __importDefault(require("./job"));
 const email_1 = __importDefault(require("./email"));
+const tmp_promise_1 = require("tmp-promise");
+const fs_1 = __importDefault(require("fs"));
+const util_1 = require("util");
 class Bulk extends base_1.default {
     constructor() {
         super(...arguments);
@@ -44,10 +47,46 @@ class Bulk extends base_1.default {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.delivery_id)
                 throw 'Delivery id is not found.';
+            const params = this.updateParams();
+            if (params.to && (params === null || params === void 0 ? void 0 : params.to.length) > 50) {
+                const csv = this.createCsv(params.to);
+                const { path, cleanup } = yield (0, tmp_promise_1.file)({ postfix: '.csv' });
+                yield (0, util_1.promisify)(fs_1.default.writeFile)(path, csv);
+                const job = yield this.import(path);
+                while (job.finished() === false) {
+                    yield new Promise((resolve) => setTimeout(resolve, 1000));
+                }
+                delete params.to;
+            }
             const url = `/deliveries/bulk/update/${this.delivery_id}`;
-            const res = yield Bulk.request.send('put', url, this.updateParams());
+            const res = yield Bulk.request.send('put', url, params);
             return res;
         });
+    }
+    createCsv(to) {
+        var _a, _b, _c;
+        // ヘッダーを作る
+        const headers = ['email'];
+        for (const t of to) {
+            const params = ((_a = t.insert_code) === null || _a === void 0 ? void 0 : _a.map((c) => c.key)) || [];
+            for (const p of params) {
+                if (!headers.includes(p))
+                    headers.push(p);
+            }
+        }
+        const lines = [`"${headers.join('","')}"`];
+        for (const t of to) {
+            const params = ((_b = t.insert_code) === null || _b === void 0 ? void 0 : _b.map((c) => c.key)) || [];
+            const values = [t.email];
+            for (const h of headers) {
+                if (h === 'email')
+                    continue;
+                const code = (_c = t.insert_code) === null || _c === void 0 ? void 0 : _c.find((c) => c.key === h);
+                values.push(code ? code.value.replace('"', '""') : '');
+            }
+            lines.push(`"${values.join('","')}"`);
+        }
+        return lines.join('\n');
     }
     send(date) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -87,12 +126,13 @@ class Bulk extends base_1.default {
     setTo(email, insertCode) {
         const params = { email };
         if (insertCode) {
-            if (Array.isArray(insertCode)) {
-                params.insert_code = insertCode;
-            }
-            else {
-                params.insert_code = [insertCode];
-            }
+            const ary = Array.isArray(insertCode) ? insertCode : [insertCode];
+            params.insert_code = ary.map(insertCode => {
+                return {
+                    key: `__${Object.keys(insertCode)[0]}__`,
+                    value: Object.values(insertCode)[0],
+                };
+            });
         }
         this.to.push(params);
         return this;

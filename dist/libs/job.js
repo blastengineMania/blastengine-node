@@ -67,6 +67,7 @@ class Job extends object_1.default {
         });
     }
     finished() {
+        this.get();
         return this.percentage === 100;
     }
 }

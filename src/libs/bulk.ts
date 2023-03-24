@@ -2,6 +2,9 @@ import Base from './base';
 import strftime from 'strftime';
 import Job from './job';
 import Email from './email';
+import { file } from 'tmp-promise';
+import fs from 'fs';
+import { promisify } from 'util';
 
 export default class Bulk extends Base {
 	to: BulkUpdateTo[] = [];
@@ -25,10 +28,45 @@ export default class Bulk extends Base {
 
 	async update(): Promise<SuccessFormat> {
 		if (!this.delivery_id) throw 'Delivery id is not found.';
-		const url = `/deliveries/bulk/update/${this.delivery_id!}`;
-		const res = await Bulk.request.send('put', url, this.updateParams());
+		const params = this.updateParams();
+		if (params.to && params?.to.length > 50) {
+			const csv = this.createCsv(params.to);
+			const {path, cleanup} = await file({postfix: '.csv'});
+			await promisify(fs.writeFile)(path, csv);
+			const job = await this.import(path);
+			while (job.finished() === false) {
+				await new Promise((resolve) => setTimeout(resolve, 1000));
+			}
+			delete params.to;
+		}
+		const url =  `/deliveries/bulk/update/${this.delivery_id!}`;
+		const res = await Bulk.request.send('put', url, params);
 		return res;
 	}
+
+	createCsv(to: BulkUpdateTo[]): string {
+		// ヘッダーを作る
+		const headers = ['email'];
+		for (const t of to) {
+			const params = t.insert_code?.map((c) => c.key) || [];
+			for (const p of params) {
+				if (!headers.includes(p)) headers.push(p);
+			}
+		}
+		const lines = [`"${headers.join('","')}"`];
+		for (const t of to) {
+			const params = t.insert_code?.map((c) => c.key) || [];
+			const values = [t.email];
+			for (const h of headers) {
+				if (h === 'email') continue;
+				const code = t.insert_code?.find((c) => c.key === h);
+				values.push(code ? code.value.replace('"', '""') : '');
+			}
+			lines.push(`"${values.join('","')}"`);
+		}
+		return lines.join('\n');
+	}
+
 
 	async send(date?: Date): Promise<SuccessFormat> {
 		if (!this.delivery_id) throw 'Delivery id is not found.';
@@ -59,14 +97,16 @@ export default class Bulk extends Base {
 		return new Email(this.delivery_id!);
 	}
 
-	setTo(email: string, insertCode?: InsertCode[] | InsertCode): Bulk {
+	setTo(email: string, insertCode?: {[key: string]: string} | {[key: string]: string}[]): Bulk {
 		const params: BulkUpdateTo = { email };
 		if (insertCode) {
-			if (Array.isArray(insertCode)) {
-				params.insert_code = insertCode;
-			} else {
-				params.insert_code = [insertCode];
-			}
+			const ary = Array.isArray(insertCode) ? insertCode : [insertCode];
+			params.insert_code = ary.map(insertCode => {
+				return {
+					key: `__${Object.keys(insertCode)[0]}__`,
+					value: Object.values(insertCode)[0],
+				}
+			});
 		}
 		this.to.push(params);
 		return this;

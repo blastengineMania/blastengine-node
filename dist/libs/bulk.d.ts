@@ -7,11 +7,16 @@ export default class Bulk extends Base {
     register(): Promise<SuccessFormat>;
     import(filePath: Attachment): Promise<Job>;
     update(): Promise<SuccessFormat>;
+    createCsv(to: BulkUpdateTo[]): string;
     send(date?: Date): Promise<SuccessFormat>;
     delete(): Promise<SuccessFormat>;
     cancel(): Promise<SuccessFormat>;
     email(): Email;
-    setTo(email: string, insertCode?: InsertCode[] | InsertCode): Bulk;
+    setTo(email: string, insertCode?: {
+        [key: string]: string;
+    } | {
+        [key: string]: string;
+    }[]): Bulk;
     saveParams(): RequestParamsBulkBegin;
     updateParams(): RequestParamsBulkUpdate;
     commitParams(): RequestParamsBulkCommit;

@@ -61,7 +61,7 @@ type RequestParamsBulkUpdate = {
 		email: string,
 		name: string,
 	},
-  to: BulkUpdateTo[],
+  to?: BulkUpdateTo[],
 	subject: string,
 	text_part: string,
 	html_part: string,

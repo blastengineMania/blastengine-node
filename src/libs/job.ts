@@ -59,6 +59,7 @@ export default class Job extends BEObject {
 	}
 
 	finished(): boolean {
+		this.get();
 		return this.percentage === 100;
 	}
 }
