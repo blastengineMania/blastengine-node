@@ -99,7 +99,6 @@ class BERequest {
     }
     sendFile(request, file) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(file);
             request.attach('file', file, { contentType: 'text/csv' });
             return request
                 .type('form');

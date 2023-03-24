@@ -123,7 +123,7 @@ class Bulk extends base_1.default {
             throw 'Delivery id is not found.';
         return new email_1.default(this.delivery_id);
     }
-    setTo(email, insertCode) {
+    addTo(email, insertCode) {
         const params = { email };
         if (insertCode) {
             const ary = Array.isArray(insertCode) ? insertCode : [insertCode];

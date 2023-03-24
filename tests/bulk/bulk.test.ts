@@ -43,7 +43,7 @@ describe('Test of begin', () => {
 					.setText('メールの本文 __code1__');
 				const res = await (bulk as Bulk).register();
 				expect(`${res.delivery_id}`).toMatch(/[0-9]+/);
-				bulk.setTo(config.to, {key: '__code1__', value: '値'});
+				bulk.addTo(config.to, {key: '__code1__', value: '値'});
 				const updateRes = await bulk.update();
 				expect(updateRes.delivery_id! === bulk.delivery_id!);
 				await bulk.delete();
@@ -61,8 +61,8 @@ describe('Test of begin', () => {
 					.setText('メールの本文 __code1__');
 				const res = await (bulk as Bulk).register();
 				expect(`${res.delivery_id!}`).toMatch(/[0-9]+/);
-				bulk.setTo(config.to, {key: '__code1__', value: '値'});
-				bulk.setTo('test@moongift.jp', {key: '__code1__', value: '値2'});
+				bulk.addTo(config.to, {key: '__code1__', value: '値'});
+				bulk.addTo('test@moongift.jp', {key: '__code1__', value: '値2'});
 				const updateRes = await bulk.update();
 				expect(updateRes.delivery_id! === bulk.delivery_id!);
 				const sendRes = await bulk.send();

@@ -12,7 +12,7 @@ export default class Bulk extends Base {
     delete(): Promise<SuccessFormat>;
     cancel(): Promise<SuccessFormat>;
     email(): Email;
-    setTo(email: string, insertCode?: {
+    addTo(email: string, insertCode?: {
         [key: string]: string;
     } | {
         [key: string]: string;

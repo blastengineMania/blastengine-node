@@ -97,7 +97,7 @@ export default class Bulk extends Base {
 		return new Email(this.delivery_id!);
 	}
 
-	setTo(email: string, insertCode?: {[key: string]: string} | {[key: string]: string}[]): Bulk {
+	addTo(email: string, insertCode?: {[key: string]: string} | {[key: string]: string}[]): Bulk {
 		const params: BulkUpdateTo = { email };
 		if (insertCode) {
 			const ary = Array.isArray(insertCode) ? insertCode : [insertCode];
