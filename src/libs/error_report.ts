@@ -1,5 +1,8 @@
 import BEObject from './object';
 import JSZip from 'jszip';
+import strftime from 'strftime';
+
+strftime.timezone(9 * 60);
 
 export default class ErrorReport extends BEObject {
 	public job_id?: number;
@@ -18,12 +21,12 @@ export default class ErrorReport extends BEObject {
 	}
 
 	setErrorStart(start: Date): ErrorReport {
-		this._error_start = start.toISOString();
+		this._error_start = strftime('%FT%T%z', start).replace('+0900', '+09:00')
 		return this;
 	}
 
 	setErrorEnd(end: Date): ErrorReport {
-		this._error_end = end.toISOString();
+		this._error_end = strftime('%FT%T%z', end).replace('+0900', '+09:00')
 		return this;
 	}
 
@@ -47,7 +50,7 @@ export default class ErrorReport extends BEObject {
 		if (this._response_code.length > 0) body['response_code'] = this._response_code;
 		const res = await ErrorReport.request.send('post', url, body) as SuccessFormat;
 		this.job_id = res.job_id!;
-		return this.job_id;
+		return this.job_id!;
 	}
 
 	async get(): Promise<void> {
@@ -67,14 +70,25 @@ export default class ErrorReport extends BEObject {
 	}
 
 	async finished(): Promise<boolean> {
-		if (!this.job_id) await this.create();
+		if (!this.job_id) {
+			try {
+				await this.create();
+			} catch (e: unknown) {
+				const messages = JSON.parse(e as string);
+				if (messages.error_messages &&
+					messages.error_messages.main &&
+					messages.error_messages.main[0] === 'no data found.') {
+					return true;
+				}
+			}
+		}
 		await this.get();
 		return this.percentage === 100;
 	}
 
 	async download(): Promise<any> {
 		if (this.report) return this.report;
-		if (this.percentage < 100) return null;
+		if (this.percentage < 100) return [];
 		const url = `/errors/list/${this.job_id}/download`;
 		const buffer = await ErrorReport.request.send('get', url) as Buffer;
 		const jsZip = await JSZip.loadAsync(buffer);

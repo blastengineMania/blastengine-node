@@ -14,6 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const object_1 = __importDefault(require("./object"));
 const jszip_1 = __importDefault(require("jszip"));
+const strftime_1 = __importDefault(require("strftime"));
+strftime_1.default.timezone(9 * 60);
 class ErrorReport extends object_1.default {
     constructor() {
         super();
@@ -24,11 +26,11 @@ class ErrorReport extends object_1.default {
         this._response_code = [];
     }
     setErrorStart(start) {
-        this._error_start = start.toISOString();
+        this._error_start = (0, strftime_1.default)('%FT%T%z', start).replace('+0900', '+09:00');
         return this;
     }
     setErrorEnd(end) {
-        this._error_end = end.toISOString();
+        this._error_end = (0, strftime_1.default)('%FT%T%z', end).replace('+0900', '+09:00');
         return this;
     }
     setEmail(email) {
@@ -75,8 +77,19 @@ class ErrorReport extends object_1.default {
     }
     finished() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.job_id)
-                yield this.create();
+            if (!this.job_id) {
+                try {
+                    yield this.create();
+                }
+                catch (e) {
+                    const messages = JSON.parse(e);
+                    if (messages.error_messages &&
+                        messages.error_messages.main &&
+                        messages.error_messages.main[0] === 'no data found.') {
+                        return true;
+                    }
+                }
+            }
             yield this.get();
             return this.percentage === 100;
         });
@@ -86,7 +99,7 @@ class ErrorReport extends object_1.default {
             if (this.report)
                 return this.report;
             if (this.percentage < 100)
-                return null;
+                return [];
             const url = `/errors/list/${this.job_id}/download`;
             const buffer = yield ErrorReport.request.send('get', url);
             const jsZip = yield jszip_1.default.loadAsync(buffer);

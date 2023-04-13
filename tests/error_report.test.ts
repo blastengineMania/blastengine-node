@@ -11,11 +11,11 @@ describe('Test of begin', () => {
 		test('Getting successful', async () => {
 			const report = new ErrorReport;
 			try {
+				report.setErrorStart(new Date('2023-03-01'));
 				while (await report.finished() === false) {
 					await new Promise((resolve) => setTimeout(resolve, 100));
 				}
 				const res = await report.download();
-				console.log(res);
 				// expect(res).toBeInstanceOf(Array);
 			} catch (e) {
 				console.error({ e });
