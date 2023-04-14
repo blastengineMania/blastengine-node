@@ -5,6 +5,8 @@ export default class Base extends BEObject {
     fromName: string;
     fromEmail: string;
     subject: string;
+    cc: string[];
+    bcc: string[];
     encode: string;
     text_part: string;
     html_part: string;
@@ -26,6 +28,8 @@ export default class Base extends BEObject {
     constructor();
     setSubject(subject: string): BEReturnType;
     setFrom(email: string, name?: string): BEReturnType;
+    addCc(email: string): BEReturnType;
+    addBcc(email: string): BEReturnType;
     setEncode(encode: string): BEReturnType;
     setText(text: string): BEReturnType;
     setHtml(html: string): BEReturnType;
