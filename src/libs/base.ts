@@ -8,6 +8,8 @@ export default class Base extends BEObject {
 	public fromName = '';
 	public fromEmail = '';
 	public subject = '';
+	public cc: string[] = [];
+	public bcc: string[] = [];
 	public encode = 'UTF-8';
 	public text_part = '';
 	public html_part = '';
@@ -41,6 +43,18 @@ export default class Base extends BEObject {
 	setFrom(email: string, name = ''): BEReturnType {
 		this.fromEmail = email;
 		this.fromName = name;
+		return this;
+	}
+
+	addCc(email: string): BEReturnType {
+		if (this.cc.length >= 10) throw new Error('Cc is limited to 10.');
+		this.cc.push(email);
+		return this;
+	}
+
+	addBcc(email: string): BEReturnType {
+		if (this.bcc.length >= 10) throw new Error('Bcc is limited to 10.');
+		this.bcc.push(email);
 		return this;
 	}
 

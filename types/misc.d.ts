@@ -77,6 +77,8 @@ type RequestParamsTransaction = {
 		name: string,
 	},
 	to: string,
+	cc: string[],
+	bcc: string[],
 	subject: string,
 	encode: string,
 	text_part: string,

@@ -16,6 +16,7 @@ describe('Test of begin', () => {
 					await new Promise((resolve) => setTimeout(resolve, 100));
 				}
 				const res = await report.download();
+				console.log(res);
 				// expect(res).toBeInstanceOf(Array);
 			} catch (e) {
 				console.error({ e });

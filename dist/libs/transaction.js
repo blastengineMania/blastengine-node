@@ -30,6 +30,8 @@ class Transaction extends base_1.default {
                 name: this.fromName
             },
             to: this.to,
+            cc: this.cc,
+            bcc: this.bcc,
             subject: this.subject,
             encode: this.encode,
             text_part: this.text_part,

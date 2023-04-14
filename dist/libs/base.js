@@ -21,6 +21,8 @@ class Base extends object_1.default {
         this.fromName = '';
         this.fromEmail = '';
         this.subject = '';
+        this.cc = [];
+        this.bcc = [];
         this.encode = 'UTF-8';
         this.text_part = '';
         this.html_part = '';
@@ -33,6 +35,18 @@ class Base extends object_1.default {
     setFrom(email, name = '') {
         this.fromEmail = email;
         this.fromName = name;
+        return this;
+    }
+    addCc(email) {
+        if (this.cc.length >= 10)
+            throw new Error('Cc is limited to 10.');
+        this.cc.push(email);
+        return this;
+    }
+    addBcc(email) {
+        if (this.bcc.length >= 10)
+            throw new Error('Bcc is limited to 10.');
+        this.bcc.push(email);
         return this;
     }
     setEncode(encode) {
