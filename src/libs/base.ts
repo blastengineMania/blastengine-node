@@ -46,18 +46,6 @@ export default class Base extends BEObject {
 		return this;
 	}
 
-	addCc(email: string): BEReturnType {
-		if (this.cc.length >= 10) throw new Error('Cc is limited to 10.');
-		this.cc.push(email);
-		return this;
-	}
-
-	addBcc(email: string): BEReturnType {
-		if (this.bcc.length >= 10) throw new Error('Bcc is limited to 10.');
-		this.bcc.push(email);
-		return this;
-	}
-
 	setEncode(encode: string): BEReturnType {
 		this.encode = encode;
 		return this;
@@ -104,5 +92,15 @@ export default class Base extends BEObject {
 
 	report(): Report {
 		return new Report(this.delivery_id!);
+	}
+
+	hashToInsertCode(hash?: {[key: string]: string}): InsertCode[] {
+		if (!hash) return [];
+		return Object.keys(hash).map(key => {
+			return {
+				key: `__${key}__`,
+				value: hash[key],
+			};
+		});
 	}
 }

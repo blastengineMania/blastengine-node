@@ -22,7 +22,7 @@ type RequestParamsBulkBegin = {
 	encode: string,
 	text_part: string,
 	html_part: string,
-	attachments?: [Attachment],
+	attachments?: Attachment[],
 	file?: Attachment,
 };
 
@@ -77,13 +77,14 @@ type RequestParamsTransaction = {
 		name: string,
 	},
 	to: string,
-	cc: string[],
-	bcc: string[],
+	cc?: string[],
+	bcc?: string[],
+	insert_code?: InsertCode[],
 	subject: string,
-	encode: string,
+	encode?: string,
 	text_part: string,
-	html_part: string,
-	attachments?: [Attachment],
+	html_part?: string,
+	attachments?: Attachment[],
 };
 
 type RequestParamsBulkImport = {
@@ -172,3 +173,21 @@ type GetErrorReportResponseFormat = {
 	total_count: number,
 	error_file_url: string,
 }
+
+type MailConfig = {
+	to: {
+		email: string,
+		insert_code?: {[key: string]: string},
+	}[],
+	cc?: string[],
+	bcc?: string[],
+	subject?: string,
+	text_part?: string,
+	html_part?: string,
+	attachments?: Attachment[] = [],
+	encode?: string,
+	from?: {
+		email: string,
+		name: string,
+	}
+};

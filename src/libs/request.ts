@@ -24,7 +24,7 @@ export default class BERequest {
 		}
 	}
 
-	hasAttachment(params?: RequestParams): [Attachment] | undefined {
+	hasAttachment(params?: RequestParams): Attachment[] | undefined {
 		if (!params) return undefined;
 		if (!('attachments' in params)) return undefined;
 		if (params!.attachments!.length > 0) {

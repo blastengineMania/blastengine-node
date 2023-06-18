@@ -35,7 +35,7 @@ describe('Test of transaction', () => {
 					.addAttachment(path.resolve('README.md'))
 					.addAttachment(path.resolve('package.json'))
 					.send();
-				expect(`${res.delivery_id}`).toMatch(/[0-9]+/);
+					expect(`${res.delivery_id}`).toMatch(/[0-9]+/);
 			} catch (e) {
 				console.error(e);
 				expect(true).toBe(false);

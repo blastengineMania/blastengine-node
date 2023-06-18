@@ -5,6 +5,7 @@ import Usage from './libs/usage';
 import BERequest from './libs/request';
 import BEObject from './libs/object';
 import ErrorReport from './libs/error_report';
+import Mail from './libs/mail';
 
 class BlastEngine {
 	userId?: string;
@@ -33,4 +34,4 @@ class BlastEngine {
 	}
 }
 
-export { BlastEngine, Bulk, Transaction, Usage, ErrorReport };
+export { BlastEngine, Bulk, Transaction, Usage, ErrorReport, Mail };

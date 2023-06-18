@@ -97,23 +97,15 @@ export default class Bulk extends Base {
 		return new Email(this.delivery_id!);
 	}
 
-	addTo(email: string, insertCode?: {[key: string]: string} | {[key: string]: string}[]): Bulk {
+	addTo(email: string, insertCode?: {[key: string]: string}): Bulk {
 		const params: BulkUpdateTo = { email };
-		if (insertCode) {
-			const ary = Array.isArray(insertCode) ? insertCode : [insertCode];
-			params.insert_code = ary.map(insertCode => {
-				return {
-					key: `__${Object.keys(insertCode)[0]}__`,
-					value: Object.values(insertCode)[0],
-				}
-			});
-		}
+		params.insert_code = this.hashToInsertCode(insertCode);
 		this.to.push(params);
 		return this;
 	}
 
 	saveParams(): RequestParamsBulkBegin {
-		return {
+		const params: RequestParamsBulkBegin = {
 			from: {
 				email: this.fromEmail,
 				name: this.fromName
@@ -123,6 +115,10 @@ export default class Bulk extends Base {
 			text_part: this.text_part,
 			html_part: this.html_part,
 		};
+		if (this.attachments.length > 0) {
+			params.attachments = this.attachments;
+		}
+		return params;
 	}
 
 	updateParams(): RequestParamsBulkUpdate {
