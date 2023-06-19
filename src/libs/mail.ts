@@ -71,7 +71,7 @@ export default class Mail extends Base {
 		return this;
 	}
 
-	addAttachment(file: Attachment): BEReturnType {
+	addAttachment(file: Attachment): Mail {
 		if (!file) throw new Error('File is required.');
 		if (!this.params.attachments) this.params.attachments = [];
 		this.params.attachments.push(file);
