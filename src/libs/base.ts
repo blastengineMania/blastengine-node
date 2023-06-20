@@ -1,40 +1,114 @@
-import Transaction from './transaction';
+// import Transaction from './transaction';
 import BEObject from './object';
 import Report from './report';
 import ErrorReport from './error_report';
+// import Bulk from './bulk';
+import { Attachment, BEReturnType, GetResponseFormat, InsertCode } from '../../types/';
 
 export default class Base extends BEObject {
-	delivery_id?: number;
+	deliveryId?: number;
 	public fromName = '';
 	public fromEmail = '';
 	public subject = '';
-	public cc: string[] = [];
-	public bcc: string[] = [];
 	public encode = 'UTF-8';
-	public text_part = '';
-	public html_part = '';
+	public textPart = '';
+	public htmlPart = '';
 	public url?: string;
 	public attachments: Attachment[] = [];
 	public file?: Attachment;
 
 	// From get() method:
-	public delivery_type?: string;
+	public deliveryType?: string;
 	public status?: string;
-	public total_count?: number;
-	public sent_count?: number;
-	public drop_count?: number;
-	public hard_error_count?: number;
-	public soft_error_count?: number;
-	public open_count?: number;
-	public delivery_time?: Date;
-	public reservation_time?: Date;
-	public created_time?: Date;
-	public updated_time?: Date;
+	public totalCount?: number;
+	public sentCount?: number;
+	public dropCount?: number;
+	public hardErrorCount?: number;
+	public softErrorCount?: number;
+	public openCount?: number;
+	public deliveryTime?: Date;
+	public reservationTime?: Date;
+	public createdTime?: Date;
+	public updatedTime?: Date;
 
 	constructor() {
 		super();
 	}
-	
+
+	/*
+	static fromJson(params: SearchResult): Base {
+		const obj = params.delivery_type === 'TRANSACTION' ? new Transaction() : new Bulk();
+		obj.sets(params);
+		return obj;
+
+	}
+	*/
+
+	sets(params: {[key: string]: any}): Base {
+		Object.entries(params).forEach(([key, value]) => {
+			this.set(key, value);
+		});
+		return this;
+	}
+
+	set(key: string, value: any): Base {
+		switch (key) {
+			case 'delivery_id':
+				this.deliveryId = value;
+				break;
+			case 'text_part':
+				this.textPart = value;
+				break;
+			case 'html_part':
+				this.htmlPart = value;
+				break;
+			case 'total_count':
+				this.totalCount = value;
+				break;
+			case 'sent_count':
+				this.sentCount = value;
+				break;
+			case 'drop_count':
+				this.dropCount = value;
+				break;
+			case 'hard_error_count':
+				this.hardErrorCount = value;
+				break;
+			case 'soft_error_count':
+				this.softErrorCount = value;
+				break;
+			case 'open_count':
+				this.openCount = value;
+				break;
+			case 'from':
+				if (value.name)	this.fromName = value.name;
+				if (value.email) this.fromEmail = value.email;
+				break;
+			case 'subject':
+				this.subject = value;
+				break;
+			case 'status':
+				this.status = value;
+				break;
+			case 'delivery_time':
+				if (value) this.deliveryTime = new Date(value);
+				break;
+			case 'reservation_time':
+				if (value) this.reservationTime = new Date(value);
+				break;
+			case 'created_time':
+				this.createdTime = new Date(value);
+				break;
+			case 'updated_time':
+				this.updatedTime = new Date(value);
+				break;
+			case 'delivery_type':
+				this.deliveryType = value;
+				break;
+		}
+		return this;
+	}
+
 	setSubject(subject: string): BEReturnType {
 		this.subject = subject;
 		return this;
@@ -52,12 +126,12 @@ export default class Base extends BEObject {
 	}
 
 	setText(text: string): BEReturnType {
-		this.text_part = text;
+		this.textPart = text;
 		return this;
 	}
 
 	setHtml(html: string): BEReturnType {
-		this.html_part = html;
+		this.htmlPart = html;
 		return this;
 	}
 
@@ -67,31 +141,14 @@ export default class Base extends BEObject {
 	}
 
 	async get(): Promise<void> {
-		if (!this.delivery_id) throw 'Delivery id is not found.';
-		const url = `/deliveries/${this.delivery_id!}`;
-		const res = await Transaction.request.send('get', url) as GetResponseFormat;
-		this.delivery_id = res.delivery_id;
-		this.fromEmail = res.from.email;
-		this.fromName = res.from.name;
-		this.subject = res.subject;
-		this.text_part = res.text_part;
-		this.html_part = res.html_part;
-		this.total_count = res.total_count;
-		this.sent_count = res.sent_count;
-		this.drop_count = res.drop_count;
-		this.hard_error_count = res.hard_error_count;
-		this.soft_error_count = res.soft_error_count;
-		this.open_count = res.open_count;
-		this.delivery_time = res.delivery_time ? new Date(res.delivery_time) : undefined;
-		this.reservation_time = res.reservation_time ? new Date(res.reservation_time) : undefined;
-		this.created_time = new Date(res.created_time);
-		this.updated_time = new Date(res.updated_time);
-		this.status = res.status;
-		this.delivery_type = res.delivery_type;
+		if (!this.deliveryId) throw 'Delivery id is not found.';
+		const url = `/deliveries/${this.deliveryId!}`;
+		const res = await Base.request.send('get', url) as GetResponseFormat;
+		this.sets(res);
 	}
 
 	report(): Report {
-		return new Report(this.delivery_id!);
+		return new Report(this.deliveryId!);
 	}
 
 	hashToInsertCode(hash?: {[key: string]: string}): InsertCode[] {

@@ -1,34 +1,34 @@
 import BEObject from './object';
+import { CreateEmailResponseFormat, GetEmailResponseFormat, RequestParamsEmailCreate } from '../../types/';
 
 export default class Email extends BEObject {
-	public delivery_id: number;
-	public email_id?: number;
+	public deliveryId: number;
+	public emailId?: number;
 	public address?: string;
-	public insert_code: {[key: string]: string} = {};
-	public created_time?: Date;
-	public updated_time?: Date;
+	public insertCode: {[key: string]: string} = {};
+	public createdTime?: Date;
+	public updatedTime?: Date;
 
 	constructor(delivery_id: number) {
 		super();
-		this.delivery_id = delivery_id;
+		this.deliveryId = delivery_id;
 	}
 
 	async get(): Promise<number> {
-		if (!this.email_id) throw 'Email id is not found.';
-		const url = `/deliveries/-/emails/${this.email_id}`;
+		if (!this.emailId) throw 'Email id is not found.';
+		const url = `/deliveries/-/emails/${this.emailId}`;
 		const res = await Email.request.send('get', url) as GetEmailResponseFormat;
-		this.email_id = res.email_id;
 		res.insert_code.forEach(params => {
-			this.insert_code[params.key.replace(/__/, '')] = params.value;
+			this.insertCode[params.key.replace(/__/, '')] = params.value;
 		});
 		this.address = res.email;
-		this.created_time = new Date(res.created_time);
-		this.updated_time = new Date(res.updated_time);
-		return res.email_id;
+		this.createdTime = new Date(res.created_time);
+		this.updatedTime = new Date(res.updated_time);
+		return this.emailId;
 	}
 
 	async save(): Promise<number> {
-		if (!this.email_id) {
+		if (!this.emailId) {
 			return this.create();
 		} else {
 			return this.update();
@@ -36,24 +36,23 @@ export default class Email extends BEObject {
 	}
 
 	async create(): Promise<number> {
-		if (!this.delivery_id) throw 'Delivery id is not found.';
-		const url = `/deliveries/${this.delivery_id}/emails`
+		if (!this.deliveryId) throw 'Delivery id is not found.';
+		const url = `/deliveries/${this.deliveryId}/emails`
 		const res = await Email.request.send('post', url, this.getParams()) as CreateEmailResponseFormat;
-		this.email_id = res.email_id;
-		return res.email_id;
+		this.emailId = res.email_id;
+		return this.emailId;
 	}
 
 	async update(): Promise<number> {
-		if (!this.email_id) throw 'Email id is not found.';
-		const url = `/deliveries/-/emails/${this.email_id}`
+		if (!this.emailId) throw 'Email id is not found.';
+		const url = `/deliveries/-/emails/${this.emailId}`
 		const res = await Email.request.send('put', url, this.getParams()) as CreateEmailResponseFormat;
-		this.email_id = res.email_id;
-		return this.email_id;
+		return this.emailId;
 	}
 
 	async delete(): Promise<boolean> {
-		if (!this.email_id) throw 'Email id is not found.';
-		const url = `/deliveries/-/emails/${this.email_id}`
+		if (!this.emailId) throw 'Email id is not found.';
+		const url = `/deliveries/-/emails/${this.emailId}`
 		const res = await Email.request.send('delete', url) as CreateEmailResponseFormat;
 		return true;
 	}
@@ -61,8 +60,8 @@ export default class Email extends BEObject {
 	getParams(): RequestParamsEmailCreate {
 		return {
 			email: this.address!,
-			insert_code: Object.keys(this.insert_code).map(key => {
-				return { key: `__${key}__`, value: this.insert_code[key] };
+			insert_code: Object.keys(this.insertCode).map(key => {
+				return { key: `__${key}__`, value: this.insertCode[key] };
 			}),
 		};
 	}

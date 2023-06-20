@@ -1,7 +1,11 @@
 import Base from './base';
+import { BEReturnType, RequestParamsTransaction, SuccessFormat} from '../../types/';
 
 export default class Transaction extends Base {
 	public to = '';
+	public cc: string[] = [];
+	public bcc: string[] = [];
+
 	public insert_code: {key: string, value: string}[] = [];
 
 	setTo(email: string, insert_code?: {[key: string]: string}): BEReturnType {
@@ -30,7 +34,7 @@ export default class Transaction extends Base {
 			},
 			to: this.to,
 			subject: this.subject,
-			text_part: this.text_part,
+			text_part: this.textPart,
 		};
 		if (this.insert_code.length > 0) {
 			params.insert_code = this.insert_code;
@@ -41,8 +45,8 @@ export default class Transaction extends Base {
 		if (this.bcc.length > 0) {
 			params.bcc = this.bcc;
 		}
-		if (this.html_part) {
-			params.html_part = this.html_part;
+		if (this.htmlPart) {
+			params.html_part = this.htmlPart;
 		}
 		if (this.attachments.length > 0) {
 			params.attachments = this.attachments;
@@ -53,7 +57,7 @@ export default class Transaction extends Base {
 	async send(date?: Date): Promise<SuccessFormat> {
 		const url = '/deliveries/transaction';
 		const res = await Transaction.request.send('post', url, this.params());
-		this.delivery_id = res.delivery_id;
+		this.deliveryId = res.delivery_id;
 		return res;
 	}
 }

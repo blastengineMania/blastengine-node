@@ -1,32 +1,33 @@
 import BEObject from './object';
 import JSZip from 'jszip';
 import strftime from 'strftime';
+import { GetErrorReportResponseFormat, SuccessFormat,  } from '../../types/';
 
 strftime.timezone(9 * 60);
 
 export default class ErrorReport extends BEObject {
-	public job_id?: number;
+	public jobId?: number;
 	public percentage: number = 0;
 	public status: string = '';
-	public error_file_url: string = '';
+	public errorFileUrl: string = '';
 	public total_count: number = 0;
 	public report?: {[key: string]: string | number | Date}[];
-	private _error_start?: string;
-	private _error_end?: string;
+	private _errorStart?: string;
+	private _errorEnd?: string;
 	private _email?: string;
-	private _response_code: number[] = [];
+	private _responseCode: number[] = [];
 
 	constructor() {
 		super();
 	}
 
 	setErrorStart(start: Date): ErrorReport {
-		this._error_start = strftime('%FT%T%z', start).replace('+0900', '+09:00')
+		this._errorStart = strftime('%FT%T%z', start).replace('+0900', '+09:00')
 		return this;
 	}
 
 	setErrorEnd(end: Date): ErrorReport {
-		this._error_end = strftime('%FT%T%z', end).replace('+0900', '+09:00')
+		this._errorEnd = strftime('%FT%T%z', end).replace('+0900', '+09:00')
 		return this;
 	}
 
@@ -36,7 +37,7 @@ export default class ErrorReport extends BEObject {
 	}
 
 	setResponseCode(code: number[]): ErrorReport {
-		this._response_code = code;
+		this._responseCode = code;
 		return this;
 	}
 
@@ -44,20 +45,20 @@ export default class ErrorReport extends BEObject {
 	async create(): Promise<number> {
 		const url = `/errors/list`;
 		const body: {[key: string]: string | number[]} = {};
-		if (this._error_start) body['error_start'] = this._error_start;
-		if (this._error_end) body['error_end'] = this._error_end;
+		if (this._errorStart) body['error_start'] = this._errorStart;
+		if (this._errorEnd) body['error_end'] = this._errorEnd;
 		if (this._email) body['email'] = this._email;
-		if (this._response_code.length > 0) body['response_code'] = this._response_code;
+		if (this._responseCode.length > 0) body['response_code'] = this._responseCode;
 		const res = await ErrorReport.request.send('post', url, body) as SuccessFormat;
-		this.job_id = res.job_id!;
-		return this.job_id!;
+		this.jobId = res.job_id!;
+		return this.jobId!;
 	}
 
 	async get(): Promise<void> {
-		if (!this.job_id) {
+		if (!this.jobId) {
 			await this.create();
 		}
-		const path = `/errors/list/${this.job_id}`
+		const path = `/errors/list/${this.jobId}`
 		const res = await ErrorReport.request.send('get', path) as GetErrorReportResponseFormat;
 		this.percentage = res.percentage;
 		this.status = res.status;
@@ -65,12 +66,12 @@ export default class ErrorReport extends BEObject {
 			this.total_count = res.total_count;
 		}
 		if (res.error_file_url) {
-			this.error_file_url = res.error_file_url;
+			this.errorFileUrl = res.error_file_url;
 		}
 	}
 
 	async finished(): Promise<boolean> {
-		if (!this.job_id) {
+		if (!this.jobId) {
 			try {
 				await this.create();
 			} catch (e: unknown) {
@@ -89,7 +90,7 @@ export default class ErrorReport extends BEObject {
 	async download(): Promise<any> {
 		if (this.report) return this.report;
 		if (this.percentage < 100) return [];
-		const url = `/errors/list/${this.job_id}/download`;
+		const url = `/errors/list/${this.jobId}/download`;
 		const buffer = await ErrorReport.request.send('get', url) as Buffer;
 		const jsZip = await JSZip.loadAsync(buffer);
 		const fileName = Object.keys(jsZip.files)[0];

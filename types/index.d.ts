@@ -13,7 +13,7 @@ declare module '*/config.json' {
   export = value;
 }
 
-type RequestParamsBulkBegin = {
+export type RequestParamsBulkBegin = {
 	from: {
 		email: string,
 		name: string,
@@ -26,17 +26,17 @@ type RequestParamsBulkBegin = {
 	file?: Attachment,
 };
 
-type InsertCode = {
+export type InsertCode = {
   key: string,
   value: string,
 };
 
-type BulkUpdateTo = {
+export type BulkUpdateTo = {
   email: string,
   insert_code?: InsertCode[],
 }
 
-type UsageResponseDataFormat = {
+export type UsageResponseDataFormat = {
 	month: number;
 	current: number;
 	remaining: number;
@@ -44,19 +44,19 @@ type UsageResponseDataFormat = {
 	plan_id: string;
 }
 
-type UsageResponseFormat = {
+export type UsageResponseFormat = {
 	data: UsageResponseDataFormat[];
 }
 
-type RequestParamsFile = {
+export type RequestParamsFile = {
 	file: Attachment,
 }
 
-type RequestParamsUsage = {
+export type RequestParamsUsage = {
 	month_ago: number,
 }
 
-type RequestParamsBulkUpdate = {
+export type RequestParamsBulkUpdate = {
 	from: {
 		email: string,
 		name: string,
@@ -67,11 +67,11 @@ type RequestParamsBulkUpdate = {
 	html_part: string,
 };
 
-type RequestParamsBulkCommit = {
+export type RequestParamsBulkCommit = {
   reservation_time?: string,
 }
 
-type RequestParamsTransaction = {
+export type RequestParamsTransaction = {
 	from: {
 		email: string,
 		name: string,
@@ -87,15 +87,15 @@ type RequestParamsTransaction = {
 	attachments?: Attachment[],
 };
 
-type RequestParamsBulkImport = {
+export type RequestParamsBulkImport = {
 	file?: Attachment
 }
 
-type Attachment = Blob | Buffer | string;
+export type Attachment = Blob | Buffer | string;
 
-type BEReturnType = Transaction | Bulk;
+export type BEReturnType = Transaction | Bulk;
 
-type RequestParams = RequestParamsTransaction | 
+export type RequestParams = RequestParamsTransaction | 
 	RequestParamsBulkBegin |
 	RequestParamsBulkUpdate |
 	RequestParamsBulkCommit |
@@ -103,12 +103,12 @@ type RequestParams = RequestParamsTransaction |
 	RequestParamsUsage |
 	RequestParamsEmailCreate;
 
-type SuccessFormat = {
+export type SuccessFormat = {
 	delivery_id?: number,
 	job_id?: number,
 };
 
-type JobResponseFormat = {
+export type JobResponseFormat = {
 	percentage: number,
 	status: string,
 	success_count: number,
@@ -117,7 +117,7 @@ type JobResponseFormat = {
 	error_file_url: string,
 };
 
-type GetResponseFormat = {
+export type GetResponseFormat = {
   delivery_id: number,
   from: {
 		email: string,
@@ -141,7 +141,7 @@ type GetResponseFormat = {
   updated_time: string,
 }
 
-type GetEmailResponseFormat = {
+export type GetEmailResponseFormat = {
 	email_id: number,
 	email: string,
 	delivery_id: number,
@@ -150,16 +150,16 @@ type GetEmailResponseFormat = {
 	updated_time: string,
 }
 
-type RequestParamsEmailCreate = {
+export type RequestParamsEmailCreate = {
 	email: string,
 	insert_code: {[key: string]: string}[],
 }
 
-type CreateEmailResponseFormat = {
+export type CreateEmailResponseFormat = {
 	email_id: number,
 }
 
-type GetReportResponseFormat = {
+export type GetReportResponseFormat = {
 	percentage: number,
 	status: string,
 	total_count: number,
@@ -167,14 +167,14 @@ type GetReportResponseFormat = {
 }
 
 
-type GetErrorReportResponseFormat = {
+export type GetErrorReportResponseFormat = {
 	percentage: number,
 	status: string,
 	total_count: number,
 	error_file_url: string,
 }
 
-type MailConfig = {
+export type MailConfig = {
 	to: {
 		email: string,
 		insert_code?: {[key: string]: string},
@@ -191,3 +191,40 @@ type MailConfig = {
 		name: string,
 	}
 };
+
+export type SendStatus = 'EDIT' | 'IMPORTING' | 'RESERVE' | 'WAIT'	| 'SENDING' | 'SENT' | 'FAILED';
+export type DeliveryType = 'TRANSACTION' | 'BULK' | 'SMTP' | 'ALL';
+export type SortType = 'delivery_time:desc' | 'delivery_time:asc' | 'updated_time:desc' | 'updated_time:asc';
+
+export type SearchCondition = {
+	text_part?: string,
+	html_part?: string,
+	subject?: string,
+	from?: string,
+	status?: SendStatus[],
+	delivery_type?: DeliveryType[],
+	delivery_start?: Date,
+	delivery_end?: Date,
+	size?: number,
+	page?: number,
+	sort?: SortType,
+};
+
+export type SearchResponse = {
+	data: SearchResult[],
+};
+
+export type SearchResult = {
+	updated_time: string,
+  created_time: string,
+  delivery_type: string,
+  subject: string,
+  delivery_id: number,
+  from: {
+		email: string,
+		name: string,
+	}
+  reservation_time?: string,
+  delivery_time: string,
+  status: string,
+}

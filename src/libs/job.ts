@@ -2,13 +2,14 @@ import { BlastEngine } from '..';
 import { promisify } from 'util';
 import BEObject from './object';
 import JSZip from 'jszip';
+import { JobResponseFormat } from '../../types/';
 
 export default class Job extends BEObject {
 	public id: number;
-	public total_count?: number;
+	public totalCount?: number;
   public percentage?: number;
-  public success_count?: number;
-  public failed_count?: number;
+  public successCount?: number;
+  public failedCount?: number;
   public status?: string;
 	public report?: string;
 
@@ -21,10 +22,10 @@ export default class Job extends BEObject {
 		if (!this.id) throw 'Job id is not found.';
 		const url = `/deliveries/-/emails/import/${this.id}`;
 		const res = await Job.request.send('get', url) as JobResponseFormat;
-		this.total_count = res.total_count;
+		this.totalCount = res.total_count;
 		this.percentage = res.percentage;
-		this.success_count = res.success_count;
-		this.failed_count = res.failed_count;
+		this.successCount = res.success_count;
+		this.failedCount = res.failed_count;
 		this.status = res.status;
 		return res;
 	}

@@ -1,4 +1,5 @@
 import request, { SuperAgentRequest } from 'superagent';
+import { RequestParams, Attachment, SuccessFormat, RequestParamsTransaction} from '../../types/';
 
 export default class BERequest {
 	public token: string;

@@ -1,9 +1,10 @@
 import Base from "./base";
 import Bulk from "./bulk";
 import Transaction from "./transaction";
+import qs from 'qs';
+import { MailConfig, SearchCondition, SearchResponse, SearchResult, Attachment} from '../../types/';
 
 export default class Mail extends Base {
-	public deliveryId?: number;
 	params: MailConfig = {
 		to: [],
 		cc: [],
@@ -14,6 +15,18 @@ export default class Mail extends Base {
 		encode: 'utf-8',
 		attachments: [],
 	};
+
+	static fromJson(params: SearchResult): Bulk | Transaction {
+		const obj = params.delivery_type === 'TRANSACTION' ? new Transaction() : new Bulk();
+		obj.sets(params);
+		return obj;
+	}
+
+	static async find(params?: SearchCondition): Promise<(Bulk | Transaction)[]> {
+		const url = `/deliveries?${params ? qs.stringify(params).replace(/%5B[0-9]?%5D/g, '%5B%5D') : ''}`;
+		const res = await Mail.request.send('get', url) as SearchResponse;
+		return res.data.map(params => Mail.fromJson(params));
+	}
 
 	addTo(email: string, insert_code?: {[key: string]: string}): Mail {
 		Object.keys(insert_code || {}).forEach(key => {
@@ -107,7 +120,7 @@ export default class Mail extends Base {
 		params.to.map(to => bulk.addTo(to.email, to.insert_code));
 		await bulk.update();
 		await bulk.send(sendTime);
-		this.deliveryId = bulk.delivery_id;
+		this.deliveryId = bulk.deliveryId;
 		return true;
 	}
 
@@ -131,7 +144,7 @@ export default class Mail extends Base {
 			params.attachments.forEach(attachment => transaction.addAttachment(attachment!));
 		}
 		await transaction.send();
-		this.deliveryId = transaction.delivery_id;
+		this.deliveryId = transaction.deliveryId;
 		return true;
 	}
 }

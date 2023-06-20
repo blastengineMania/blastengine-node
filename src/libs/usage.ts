@@ -1,10 +1,12 @@
 import BEObject from "./object";
+import { UsageResponseDataFormat, UsageResponseFormat } from '../../types/';
+
 export default class Usage extends BEObject{
 	public month?: number;
 	public current?: number;
 	public remaining?: number;
-	public update_time?: string;
-	public plan_id?: string;
+	public updateTime?: string;
+	public planId?: string;
 
 	constructor(params: UsageResponseDataFormat) {
 		super();
@@ -15,8 +17,8 @@ export default class Usage extends BEObject{
 		this.month = params.month;
 		this.current = params.current;
 		this.remaining = params.remaining;
-		this.update_time = params.update_time;
-		this.plan_id = params.plan_id;
+		this.updateTime = params.update_time;
+		this.planId = params.plan_id;
 	}
 
 	static async get(month_ago: number = 1): Promise<Usage[]> {
