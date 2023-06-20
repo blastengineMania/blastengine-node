@@ -1,17 +1,17 @@
 import BEObject from './object';
 export default class ErrorReport extends BEObject {
-    job_id?: number;
+    jobId?: number;
     percentage: number;
     status: string;
-    error_file_url: string;
+    errorFileUrl: string;
     total_count: number;
     report?: {
         [key: string]: string | number | Date;
     }[];
-    private _error_start?;
-    private _error_end?;
+    private _errorStart?;
+    private _errorEnd?;
     private _email?;
-    private _response_code;
+    private _responseCode;
     constructor();
     setErrorStart(start: Date): ErrorReport;
     setErrorEnd(end: Date): ErrorReport;

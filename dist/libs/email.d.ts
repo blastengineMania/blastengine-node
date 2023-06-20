@@ -1,13 +1,14 @@
 import BEObject from './object';
+import { RequestParamsEmailCreate } from '../../types/';
 export default class Email extends BEObject {
-    delivery_id: number;
-    email_id?: number;
+    deliveryId: number;
+    emailId?: number;
     address?: string;
-    insert_code: {
+    insertCode: {
         [key: string]: string;
     };
-    created_time?: Date;
-    updated_time?: Date;
+    createdTime?: Date;
+    updatedTime?: Date;
     constructor(delivery_id: number);
     get(): Promise<number>;
     save(): Promise<number>;

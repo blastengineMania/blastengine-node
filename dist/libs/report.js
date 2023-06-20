@@ -15,39 +15,39 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const object_1 = __importDefault(require("./object"));
 const jszip_1 = __importDefault(require("jszip"));
 class Report extends object_1.default {
-    constructor(delivery_id) {
+    constructor(deliveryId) {
         super();
         this.percentage = 0;
         this.status = '';
-        this.mail_open_file_url = '';
-        this.total_count = 0;
-        this.delivery_id = delivery_id;
+        this.mailOpenFileUrl = '';
+        this.totalCount = 0;
+        this.deliveryId = deliveryId;
     }
     create() {
         return __awaiter(this, void 0, void 0, function* () {
-            const url = `/deliveries/${this.delivery_id}/analysis/report`;
+            const url = `/deliveries/${this.deliveryId}/analysis/report`;
             const res = yield Report.request.send('post', url);
-            this.job_id = res.job_id;
-            return this.job_id;
+            this.jobId = res.job_id;
+            return this.jobId;
         });
     }
     get() {
         return __awaiter(this, void 0, void 0, function* () {
-            const path = `/deliveries/-/analysis/report/${this.job_id}`;
+            const path = `/deliveries/-/analysis/report/${this.jobId}`;
             const res = yield Report.request.send('get', path);
             this.percentage = res.percentage;
             this.status = res.status;
             if (res.total_count) {
-                this.total_count = res.total_count;
+                this.totalCount = res.total_count;
             }
             if (res.mail_open_file_url) {
-                this.mail_open_file_url = res.mail_open_file_url;
+                this.mailOpenFileUrl = res.mail_open_file_url;
             }
         });
     }
     finished() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.job_id)
+            if (!this.jobId)
                 yield this.create();
             yield this.get();
             return this.percentage === 100;
@@ -59,7 +59,7 @@ class Report extends object_1.default {
                 return this.report;
             if (this.percentage < 100)
                 return null;
-            const url = `/deliveries/-/analysis/report/${this.job_id}/download`;
+            const url = `/deliveries/-/analysis/report/${this.jobId}/download`;
             const buffer = yield Report.request.send('get', url);
             const jsZip = yield jszip_1.default.loadAsync(buffer);
             const fileName = Object.keys(jsZip.files)[0];

@@ -1,9 +1,9 @@
 import Base from './base';
 import Job from './job';
 import Email from './email';
+import { Attachment, BulkUpdateTo, SuccessFormat, RequestParamsBulkBegin, RequestParamsBulkUpdate, RequestParamsBulkCommit } from '../../types/';
 export default class Bulk extends Base {
     to: BulkUpdateTo[];
-    date?: Date;
     register(): Promise<SuccessFormat>;
     import(filePath: Attachment): Promise<Job>;
     update(): Promise<SuccessFormat>;
@@ -14,10 +14,8 @@ export default class Bulk extends Base {
     email(): Email;
     addTo(email: string, insertCode?: {
         [key: string]: string;
-    } | {
-        [key: string]: string;
-    }[]): Bulk;
+    }): Bulk;
     saveParams(): RequestParamsBulkBegin;
     updateParams(): RequestParamsBulkUpdate;
-    commitParams(): RequestParamsBulkCommit;
+    commitParams(date?: Date): RequestParamsBulkCommit;
 }

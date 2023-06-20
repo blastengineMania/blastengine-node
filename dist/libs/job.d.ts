@@ -1,10 +1,11 @@
 import BEObject from './object';
+import { JobResponseFormat } from '../../types/';
 export default class Job extends BEObject {
     id: number;
-    total_count?: number;
+    totalCount?: number;
     percentage?: number;
-    success_count?: number;
-    failed_count?: number;
+    successCount?: number;
+    failedCount?: number;
     status?: string;
     report?: string;
     constructor(id: number);

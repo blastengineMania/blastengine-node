@@ -1,10 +1,11 @@
 import BEObject from "./object";
+import { UsageResponseDataFormat } from '../../types/';
 export default class Usage extends BEObject {
     month?: number;
     current?: number;
     remaining?: number;
-    update_time?: string;
-    plan_id?: string;
+    updateTime?: string;
+    planId?: string;
     constructor(params: UsageResponseDataFormat);
     setParams(params: UsageResponseDataFormat): void;
     static get(month_ago?: number): Promise<Usage[]>;

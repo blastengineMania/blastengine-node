@@ -22,8 +22,8 @@ class Usage extends object_1.default {
         this.month = params.month;
         this.current = params.current;
         this.remaining = params.remaining;
-        this.update_time = params.update_time;
-        this.plan_id = params.plan_id;
+        this.updateTime = params.update_time;
+        this.planId = params.plan_id;
     }
     static get(month_ago = 1) {
         return __awaiter(this, void 0, void 0, function* () {

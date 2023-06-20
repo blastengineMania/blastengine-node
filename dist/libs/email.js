@@ -16,28 +16,27 @@ const object_1 = __importDefault(require("./object"));
 class Email extends object_1.default {
     constructor(delivery_id) {
         super();
-        this.insert_code = {};
-        this.delivery_id = delivery_id;
+        this.insertCode = {};
+        this.deliveryId = delivery_id;
     }
     get() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.email_id)
+            if (!this.emailId)
                 throw 'Email id is not found.';
-            const url = `/deliveries/-/emails/${this.email_id}`;
+            const url = `/deliveries/-/emails/${this.emailId}`;
             const res = yield Email.request.send('get', url);
-            this.email_id = res.email_id;
             res.insert_code.forEach(params => {
-                this.insert_code[params.key.replace(/__/, '')] = params.value;
+                this.insertCode[params.key.replace(/__/, '')] = params.value;
             });
             this.address = res.email;
-            this.created_time = new Date(res.created_time);
-            this.updated_time = new Date(res.updated_time);
-            return res.email_id;
+            this.createdTime = new Date(res.created_time);
+            this.updatedTime = new Date(res.updated_time);
+            return this.emailId;
         });
     }
     save() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.email_id) {
+            if (!this.emailId) {
                 return this.create();
             }
             else {
@@ -47,29 +46,28 @@ class Email extends object_1.default {
     }
     create() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.delivery_id)
+            if (!this.deliveryId)
                 throw 'Delivery id is not found.';
-            const url = `/deliveries/${this.delivery_id}/emails`;
+            const url = `/deliveries/${this.deliveryId}/emails`;
             const res = yield Email.request.send('post', url, this.getParams());
-            this.email_id = res.email_id;
-            return res.email_id;
+            this.emailId = res.email_id;
+            return this.emailId;
         });
     }
     update() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.email_id)
+            if (!this.emailId)
                 throw 'Email id is not found.';
-            const url = `/deliveries/-/emails/${this.email_id}`;
+            const url = `/deliveries/-/emails/${this.emailId}`;
             const res = yield Email.request.send('put', url, this.getParams());
-            this.email_id = res.email_id;
-            return this.email_id;
+            return this.emailId;
         });
     }
     delete() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.email_id)
+            if (!this.emailId)
                 throw 'Email id is not found.';
-            const url = `/deliveries/-/emails/${this.email_id}`;
+            const url = `/deliveries/-/emails/${this.emailId}`;
             const res = yield Email.request.send('delete', url);
             return true;
         });
@@ -77,8 +75,8 @@ class Email extends object_1.default {
     getParams() {
         return {
             email: this.address,
-            insert_code: Object.keys(this.insert_code).map(key => {
-                return { key: `__${key}__`, value: this.insert_code[key] };
+            insert_code: Object.keys(this.insertCode).map(key => {
+                return { key: `__${key}__`, value: this.insertCode[key] };
             }),
         };
     }

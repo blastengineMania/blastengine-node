@@ -23,6 +23,8 @@ export default class Mail extends Base {
 	}
 
 	static async find(params?: SearchCondition): Promise<(Bulk | Transaction)[]> {
+		if (params?.delivery_start && params.delivery_start instanceof Date) params.delivery_start = params.delivery_start.toISOString();
+		if (params?.delivery_end && params.delivery_end instanceof Date) params.delivery_end = params.delivery_end.toISOString();
 		const url = `/deliveries?${params ? qs.stringify(params).replace(/%5B[0-9]?%5D/g, '%5B%5D') : ''}`;
 		const res = await Mail.request.send('get', url) as SearchResponse;
 		return res.data.map(params => Mail.fromJson(params));

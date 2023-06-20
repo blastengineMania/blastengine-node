@@ -17,31 +17,59 @@ class Transaction extends base_1.default {
     constructor() {
         super(...arguments);
         this.to = '';
-        this.url = '/deliveries/transaction';
+        this.cc = [];
+        this.bcc = [];
+        this.insert_code = [];
     }
-    setTo(email) {
+    setTo(email, insert_code) {
         this.to = email;
+        this.insert_code = this.hashToInsertCode(insert_code);
+        return this;
+    }
+    addCc(email) {
+        if (this.cc.length >= 10)
+            throw new Error('Cc is limited to 10.');
+        this.cc.push(email);
+        return this;
+    }
+    addBcc(email) {
+        if (this.bcc.length >= 10)
+            throw new Error('Bcc is limited to 10.');
+        this.bcc.push(email);
         return this;
     }
     params() {
-        return {
+        const params = {
             from: {
                 email: this.fromEmail,
                 name: this.fromName
             },
             to: this.to,
-            cc: this.cc,
-            bcc: this.bcc,
             subject: this.subject,
-            encode: this.encode,
-            text_part: this.text_part,
-            html_part: this.html_part,
+            text_part: this.textPart,
         };
+        if (this.insert_code.length > 0) {
+            params.insert_code = this.insert_code;
+        }
+        if (this.cc.length > 0) {
+            params.cc = this.cc;
+        }
+        if (this.bcc.length > 0) {
+            params.bcc = this.bcc;
+        }
+        if (this.htmlPart) {
+            params.html_part = this.htmlPart;
+        }
+        if (this.attachments.length > 0) {
+            params.attachments = this.attachments;
+        }
+        return params;
     }
-    send(url, requestParams) {
+    send(date) {
         return __awaiter(this, void 0, void 0, function* () {
-            const res = yield Transaction.request.send('post', this.url, this.params());
-            this.delivery_id = res.delivery_id;
+            const url = '/deliveries/transaction';
+            const res = yield Transaction.request.send('post', url, this.params());
+            this.deliveryId = res.delivery_id;
             return res;
         });
     }

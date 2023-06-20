@@ -28,15 +28,15 @@ class Bulk extends base_1.default {
         return __awaiter(this, void 0, void 0, function* () {
             const url = '/deliveries/bulk/begin';
             const res = yield Bulk.request.send('post', url, this.saveParams());
-            this.delivery_id = res.delivery_id;
+            this.deliveryId = res.delivery_id;
             return res;
         });
     }
     import(filePath) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.delivery_id)
+            if (!this.deliveryId)
                 throw 'Delivery id is not found.';
-            const url = `/deliveries/${this.delivery_id}/emails/import`;
+            const url = `/deliveries/${this.deliveryId}/emails/import`;
             const res = yield Bulk.request.send('post', url, {
                 file: filePath
             });
@@ -45,10 +45,10 @@ class Bulk extends base_1.default {
     }
     update() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.delivery_id)
+            if (!this.deliveryId)
                 throw 'Delivery id is not found.';
             const params = this.updateParams();
-            if (params.to && (params === null || params === void 0 ? void 0 : params.to.length) > 50) {
+            if (params.to && params.to.length > 50) {
                 const csv = this.createCsv(params.to);
                 const { path, cleanup } = yield (0, tmp_promise_1.file)({ postfix: '.csv' });
                 yield (0, util_1.promisify)(fs_1.default.writeFile)(path, csv);
@@ -58,13 +58,13 @@ class Bulk extends base_1.default {
                 }
                 delete params.to;
             }
-            const url = `/deliveries/bulk/update/${this.delivery_id}`;
+            const url = `/deliveries/bulk/update/${this.deliveryId}`;
             const res = yield Bulk.request.send('put', url, params);
             return res;
         });
     }
     createCsv(to) {
-        var _a, _b, _c;
+        var _a, _b;
         // ヘッダーを作る
         const headers = ['email'];
         for (const t of to) {
@@ -76,12 +76,12 @@ class Bulk extends base_1.default {
         }
         const lines = [`"${headers.join('","')}"`];
         for (const t of to) {
-            const params = ((_b = t.insert_code) === null || _b === void 0 ? void 0 : _b.map((c) => c.key)) || [];
+            // const params = t.insert_code?.map((c) => c.key) || [];
             const values = [t.email];
             for (const h of headers) {
                 if (h === 'email')
                     continue;
-                const code = (_c = t.insert_code) === null || _c === void 0 ? void 0 : _c.find((c) => c.key === h);
+                const code = (_b = t.insert_code) === null || _b === void 0 ? void 0 : _b.find((c) => c.key === h);
                 values.push(code ? code.value.replace('"', '""') : '');
             }
             lines.push(`"${values.join('","')}"`);
@@ -90,64 +90,59 @@ class Bulk extends base_1.default {
     }
     send(date) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.delivery_id)
+            if (!this.deliveryId)
                 throw 'Delivery id is not found.';
             const url = date ?
-                `/deliveries/bulk/commit/${this.delivery_id}` :
-                `/deliveries/bulk/commit/${this.delivery_id}/immediate`;
-            this.date = date;
-            const res = yield Bulk.request.send('patch', url, this.commitParams());
+                `/deliveries/bulk/commit/${this.deliveryId}` :
+                `/deliveries/bulk/commit/${this.deliveryId}/immediate`;
+            const res = yield Bulk.request.send('patch', url, this.commitParams(date));
             return res;
         });
     }
     delete() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.delivery_id)
+            if (!this.deliveryId)
                 throw 'Delivery id is not found.';
-            const url = `/deliveries/${this.delivery_id}`;
+            const url = `/deliveries/${this.deliveryId}`;
             const res = yield Bulk.request.send('delete', url);
             return res;
         });
     }
     cancel() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.delivery_id)
+            if (!this.deliveryId)
                 throw 'Delivery id is not found.';
-            const url = `/deliveries/${this.delivery_id}/cancel`;
+            const url = `/deliveries/${this.deliveryId}/cancel`;
             const res = yield Bulk.request.send('patch', url);
             return res;
         });
     }
     email() {
-        if (!this.delivery_id)
+        if (!this.deliveryId)
             throw 'Delivery id is not found.';
-        return new email_1.default(this.delivery_id);
+        return new email_1.default(this.deliveryId);
     }
     addTo(email, insertCode) {
         const params = { email };
-        if (insertCode) {
-            const ary = Array.isArray(insertCode) ? insertCode : [insertCode];
-            params.insert_code = ary.map(insertCode => {
-                return {
-                    key: `__${Object.keys(insertCode)[0]}__`,
-                    value: Object.values(insertCode)[0],
-                };
-            });
-        }
+        params.insert_code = this.hashToInsertCode(insertCode);
         this.to.push(params);
         return this;
     }
     saveParams() {
-        return {
+        const params = {
             from: {
                 email: this.fromEmail,
                 name: this.fromName
             },
             subject: this.subject,
             encode: this.encode,
-            text_part: this.text_part,
-            html_part: this.html_part,
+            text_part: this.textPart,
+            html_part: this.htmlPart,
         };
+        if (this.attachments.length > 0) {
+            params.attachments = this.attachments;
+        }
+        return params;
     }
     updateParams() {
         return {
@@ -157,16 +152,16 @@ class Bulk extends base_1.default {
             },
             subject: this.subject,
             to: this.to,
-            text_part: this.text_part,
-            html_part: this.html_part,
+            text_part: this.textPart,
+            html_part: this.htmlPart,
         };
     }
-    commitParams() {
-        if (!this.date)
+    commitParams(date) {
+        if (!date)
             return {};
         strftime_1.default.timezone(9 * 60);
         return {
-            reservation_time: (0, strftime_1.default)('%FT%T%z', this.date).replace('+0900', '+09:00')
+            reservation_time: (0, strftime_1.default)('%FT%T%z', date).replace('+0900', '+09:00')
         };
     }
 }

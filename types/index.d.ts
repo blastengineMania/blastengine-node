@@ -195,6 +195,7 @@ export type MailConfig = {
 export type SendStatus = 'EDIT' | 'IMPORTING' | 'RESERVE' | 'WAIT'	| 'SENDING' | 'SENT' | 'FAILED';
 export type DeliveryType = 'TRANSACTION' | 'BULK' | 'SMTP' | 'ALL';
 export type SortType = 'delivery_time:desc' | 'delivery_time:asc' | 'updated_time:desc' | 'updated_time:asc';
+export type ResponseCode = 250 | 421 | 450 | 451 | 452 | 453 | 454 | 500 | 521 | 530 | 550 | 551 | 552 | 553 | 554;
 
 export type SearchCondition = {
 	text_part?: string,
@@ -203,8 +204,8 @@ export type SearchCondition = {
 	from?: string,
 	status?: SendStatus[],
 	delivery_type?: DeliveryType[],
-	delivery_start?: Date,
-	delivery_end?: Date,
+	delivery_start?: Date | string,
+	delivery_end?: Date | string,
 	size?: number,
 	page?: number,
 	sort?: SortType,
@@ -228,3 +229,33 @@ export type SearchResult = {
   delivery_time: string,
   status: string,
 }
+
+export type SearchLogCondition = {
+	anchor?: number,
+	count?: number,
+	email?: string,
+	delivery_type?: DeliveryType[],
+	delivery_id?: number,
+	status?: SendStatus[],
+	response_code?: ResponseCode[],
+	delivery_start?: Date | string,
+	delivery_end?: Date | string,
+};
+
+export type SearchLogResponse = {
+	data: SearchLogResult[],
+};
+
+export type SearchLogResult = {
+	delivery_time: string,
+	delivery_id: number,
+	maillog_id: number,
+	delivery_type: string,
+	email: string,
+	status: string,
+	last_response_code: string,
+	last_response_message: string,
+	open_time: string,
+	created_time: string,
+	updated_time: string,
+};

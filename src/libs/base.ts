@@ -35,22 +35,6 @@ export default class Base extends BEObject {
 		super();
 	}
 
-	/*
-	static fromJson(params: SearchResult): Base {
-		const obj = params.delivery_type === 'TRANSACTION' ? new Transaction() : new Bulk();
-		obj.sets(params);
-		return obj;
-
-	}
-	*/
-
-	sets(params: {[key: string]: any}): Base {
-		Object.entries(params).forEach(([key, value]) => {
-			this.set(key, value);
-		});
-		return this;
-	}
-
 	set(key: string, value: any): Base {
 		switch (key) {
 			case 'delivery_id':

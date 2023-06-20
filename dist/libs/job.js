@@ -25,10 +25,10 @@ class Job extends object_1.default {
                 throw 'Job id is not found.';
             const url = `/deliveries/-/emails/import/${this.id}`;
             const res = yield Job.request.send('get', url);
-            this.total_count = res.total_count;
+            this.totalCount = res.total_count;
             this.percentage = res.percentage;
-            this.success_count = res.success_count;
-            this.failed_count = res.failed_count;
+            this.successCount = res.success_count;
+            this.failedCount = res.failed_count;
             this.status = res.status;
             return res;
         });

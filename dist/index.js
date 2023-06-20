@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ErrorReport = exports.Usage = exports.Transaction = exports.Bulk = exports.BlastEngine = void 0;
+exports.Log = exports.Mail = exports.ErrorReport = exports.Usage = exports.Transaction = exports.Bulk = exports.BlastEngine = void 0;
 const crypto_1 = __importDefault(require("crypto"));
 const transaction_1 = __importDefault(require("./libs/transaction"));
 exports.Transaction = transaction_1.default;
@@ -15,6 +15,10 @@ const request_1 = __importDefault(require("./libs/request"));
 const object_1 = __importDefault(require("./libs/object"));
 const error_report_1 = __importDefault(require("./libs/error_report"));
 exports.ErrorReport = error_report_1.default;
+const mail_1 = __importDefault(require("./libs/mail"));
+exports.Mail = mail_1.default;
+const log_1 = __importDefault(require("./libs/log"));
+exports.Log = log_1.default;
 class BlastEngine {
     constructor(userId, apiKey) {
         this.userId = userId;

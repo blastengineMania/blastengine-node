@@ -21,16 +21,16 @@ class ErrorReport extends object_1.default {
         super();
         this.percentage = 0;
         this.status = '';
-        this.error_file_url = '';
+        this.errorFileUrl = '';
         this.total_count = 0;
-        this._response_code = [];
+        this._responseCode = [];
     }
     setErrorStart(start) {
-        this._error_start = (0, strftime_1.default)('%FT%T%z', start).replace('+0900', '+09:00');
+        this._errorStart = (0, strftime_1.default)('%FT%T%z', start).replace('+0900', '+09:00');
         return this;
     }
     setErrorEnd(end) {
-        this._error_end = (0, strftime_1.default)('%FT%T%z', end).replace('+0900', '+09:00');
+        this._errorEnd = (0, strftime_1.default)('%FT%T%z', end).replace('+0900', '+09:00');
         return this;
     }
     setEmail(email) {
@@ -38,32 +38,32 @@ class ErrorReport extends object_1.default {
         return this;
     }
     setResponseCode(code) {
-        this._response_code = code;
+        this._responseCode = code;
         return this;
     }
     create() {
         return __awaiter(this, void 0, void 0, function* () {
             const url = `/errors/list`;
             const body = {};
-            if (this._error_start)
-                body['error_start'] = this._error_start;
-            if (this._error_end)
-                body['error_end'] = this._error_end;
+            if (this._errorStart)
+                body['error_start'] = this._errorStart;
+            if (this._errorEnd)
+                body['error_end'] = this._errorEnd;
             if (this._email)
                 body['email'] = this._email;
-            if (this._response_code.length > 0)
-                body['response_code'] = this._response_code;
+            if (this._responseCode.length > 0)
+                body['response_code'] = this._responseCode;
             const res = yield ErrorReport.request.send('post', url, body);
-            this.job_id = res.job_id;
-            return this.job_id;
+            this.jobId = res.job_id;
+            return this.jobId;
         });
     }
     get() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.job_id) {
+            if (!this.jobId) {
                 yield this.create();
             }
-            const path = `/errors/list/${this.job_id}`;
+            const path = `/errors/list/${this.jobId}`;
             const res = yield ErrorReport.request.send('get', path);
             this.percentage = res.percentage;
             this.status = res.status;
@@ -71,13 +71,13 @@ class ErrorReport extends object_1.default {
                 this.total_count = res.total_count;
             }
             if (res.error_file_url) {
-                this.error_file_url = res.error_file_url;
+                this.errorFileUrl = res.error_file_url;
             }
         });
     }
     finished() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.job_id) {
+            if (!this.jobId) {
                 try {
                     yield this.create();
                 }
@@ -100,7 +100,7 @@ class ErrorReport extends object_1.default {
                 return this.report;
             if (this.percentage < 100)
                 return [];
-            const url = `/errors/list/${this.job_id}/download`;
+            const url = `/errors/list/${this.jobId}/download`;
             const buffer = yield ErrorReport.request.send('get', url);
             const jsZip = yield jszip_1.default.loadAsync(buffer);
             const fileName = Object.keys(jsZip.files)[0];
