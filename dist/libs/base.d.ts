@@ -25,9 +25,6 @@ export default class Base extends BEObject {
     createdTime?: Date;
     updatedTime?: Date;
     constructor();
-    sets(params: {
-        [key: string]: any;
-    }): Base;
     set(key: string, value: any): Base;
     setSubject(subject: string): BEReturnType;
     setFrom(email: string, name?: string): BEReturnType;
