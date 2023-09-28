@@ -192,7 +192,7 @@ export type MailConfig = {
 	}
 };
 
-export type SendStatus = 'EDIT' | 'IMPORTING' | 'RESERVE' | 'WAIT'	| 'SENDING' | 'SENT' | 'FAILED';
+export type SendStatus = 'EDIT' | 'IMPORTING' | 'RESERVE' | 'WAIT'	| 'SENDING' | 'SENT' | 'FAILED' | 'HARDERROR' | 'SOFTERROR' | 'DROP' | 'RETRY';
 export type DeliveryType = 'TRANSACTION' | 'BULK' | 'SMTP' | 'ALL';
 export type SortType = 'delivery_time:desc' | 'delivery_time:asc' | 'updated_time:desc' | 'updated_time:asc';
 export type ResponseCode = 250 | 421 | 450 | 451 | 452 | 453 | 454 | 500 | 521 | 530 | 550 | 551 | 552 | 553 | 554;

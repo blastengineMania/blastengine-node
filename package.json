@@ -1,12 +1,12 @@
 {
   "name": "blastengine",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
     "test": "jest",
     "watch": "tsc -d -w",
-    "build": "tsc"
+    "build": "tsc -d"
   },
   "keywords": [],
   "author": "",
