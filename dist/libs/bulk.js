@@ -19,38 +19,69 @@ const email_1 = __importDefault(require("./email"));
 const tmp_promise_1 = require("tmp-promise");
 const fs_1 = __importDefault(require("fs"));
 const util_1 = require("util");
+/**
+ * Class representing a bulk operation, extending the Base class.
+ * Provides methods to register, update, and send bulk deliveries.
+ *
+ * @extends {Base}
+ */
 class Bulk extends base_1.default {
     constructor() {
         super(...arguments);
+        /**
+         * An array to hold bulk update information.
+         * @type {BulkUpdateTo[]}
+         */
         this.to = [];
     }
+    /**
+     * Registers a new bulk delivery.
+     *
+     * @async
+     * @return {Promise<SuccessFormat>} - The result of the registration.
+     */
     register() {
         return __awaiter(this, void 0, void 0, function* () {
-            const url = '/deliveries/bulk/begin';
-            const res = yield Bulk.request.send('post', url, this.saveParams());
+            const url = "/deliveries/bulk/begin";
+            const res = yield Bulk.request.send("post", url, this.saveParams());
             this.deliveryId = res.delivery_id;
             return res;
         });
     }
+    /**
+     * Imports a file for bulk update.
+     *
+     * @async
+     * @param {Attachment} filePath - The path of the file to import.
+     * @return {Promise<Job>} - A Job instance representing the import job.
+     * @throws Will throw an error if deliveryId is not found.
+     */
     import(filePath) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.deliveryId)
-                throw 'Delivery id is not found.';
+                throw new Error("Delivery id is not found.");
             const url = `/deliveries/${this.deliveryId}/emails/import`;
-            const res = yield Bulk.request.send('post', url, {
-                file: filePath
+            const res = yield Bulk.request.send("post", url, {
+                file: filePath,
             });
             return new job_1.default(res.job_id);
         });
     }
+    /**
+     * Updates the bulk delivery.
+     *
+     * @async
+     * @return {Promise<SuccessFormat>} - The result of the update.
+     * @throws Will throw an error if deliveryId is not found.
+     */
     update() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.deliveryId)
-                throw 'Delivery id is not found.';
+                throw new Error("Delivery id is not found.");
             const params = this.updateParams();
             if (params.to && params.to.length > 50) {
                 const csv = this.createCsv(params.to);
-                const { path, cleanup } = yield (0, tmp_promise_1.file)({ postfix: '.csv' });
+                const { path } = yield (0, tmp_promise_1.file)({ postfix: ".csv" });
                 yield (0, util_1.promisify)(fs_1.default.writeFile)(path, csv);
                 const job = yield this.import(path);
                 while (job.finished() === false) {
@@ -59,14 +90,20 @@ class Bulk extends base_1.default {
                 delete params.to;
             }
             const url = `/deliveries/bulk/update/${this.deliveryId}`;
-            const res = yield Bulk.request.send('put', url, params);
+            const res = yield Bulk.request.send("put", url, params);
             return res;
         });
     }
+    /**
+     * Creates a CSV string from the provided data.
+     *
+     * @param {BulkUpdateTo[]} to - The data to convert to CSV.
+     * @return {string} - The CSV string.
+     */
     createCsv(to) {
         var _a, _b;
         // ヘッダーを作る
-        const headers = ['email'];
+        const headers = ["email"];
         for (const t of to) {
             const params = ((_a = t.insert_code) === null || _a === void 0 ? void 0 : _a.map((c) => c.key)) || [];
             for (const p of params) {
@@ -74,65 +111,105 @@ class Bulk extends base_1.default {
                     headers.push(p);
             }
         }
-        const lines = [`"${headers.join('","')}"`];
+        const lines = [`"${headers.join("\",\"")}"`];
         for (const t of to) {
             // const params = t.insert_code?.map((c) => c.key) || [];
             const values = [t.email];
             for (const h of headers) {
-                if (h === 'email')
+                if (h === "email")
                     continue;
                 const code = (_b = t.insert_code) === null || _b === void 0 ? void 0 : _b.find((c) => c.key === h);
-                values.push(code ? code.value.replace('"', '""') : '');
+                values.push(code ? code.value.replace("\"", "\"\"") : "");
             }
-            lines.push(`"${values.join('","')}"`);
+            lines.push(`"${values.join("\",\"")}"`);
         }
-        return lines.join('\n');
+        return lines.join("\n");
     }
+    /**
+     * Sends the bulk delivery.
+     *
+     * @async
+     * @param {Date} [date] - The date to send the delivery.
+     * @return {Promise<SuccessFormat>} - The result of the send operation.
+     * @throws Will throw an error if deliveryId is not found.
+     */
     send(date) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.deliveryId)
-                throw 'Delivery id is not found.';
+                throw new Error("Delivery id is not found.");
             const url = date ?
                 `/deliveries/bulk/commit/${this.deliveryId}` :
                 `/deliveries/bulk/commit/${this.deliveryId}/immediate`;
-            const res = yield Bulk.request.send('patch', url, this.commitParams(date));
+            const res = yield Bulk.request.send("patch", url, this.commitParams(date));
             return res;
         });
     }
+    /**
+     * Deletes the bulk delivery.
+     *
+     * @async
+     * @return {Promise<SuccessFormat>} - The result of the delete operation.
+     * @throws Will throw an error if deliveryId is not found.
+     */
     delete() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.deliveryId)
-                throw 'Delivery id is not found.';
+                throw new Error("Delivery id is not found.");
             const url = `/deliveries/${this.deliveryId}`;
-            const res = yield Bulk.request.send('delete', url);
+            const res = yield Bulk.request.send("delete", url);
             return res;
         });
     }
+    /**
+     * Cancels the bulk delivery.
+     *
+     * @async
+     * @return {Promise<SuccessFormat>} - The result of the cancel operation.
+     * @throws Will throw an error if deliveryId is not found.
+     */
     cancel() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.deliveryId)
-                throw 'Delivery id is not found.';
+                throw new Error("Delivery id is not found.");
             const url = `/deliveries/${this.deliveryId}/cancel`;
-            const res = yield Bulk.request.send('patch', url);
+            const res = yield Bulk.request.send("patch", url);
             return res;
         });
     }
+    /**
+     * Gets an Email instance for the current bulk delivery.
+     *
+     * @return {Email} - The Email instance.
+     * @throws Will throw an error if deliveryId is not found.
+     */
     email() {
         if (!this.deliveryId)
-            throw 'Delivery id is not found.';
+            throw new Error("Delivery id is not found.");
         return new email_1.default(this.deliveryId);
     }
+    /**
+     * Adds a recipient to the bulk delivery.
+     *
+     * @param {string} email - The email address of the recipient.
+     * @param {InsertCode} insertCode - The insert code for the recipient.
+     * @return {Bulk} - The current instance.
+     */
     addTo(email, insertCode) {
         const params = { email };
         params.insert_code = this.hashToInsertCode(insertCode);
         this.to.push(params);
         return this;
     }
+    /**
+     * Prepares the parameters for saving the bulk delivery.
+     *
+     * @return {RequestParamsBulkBegin} - The prepared parameters.
+     */
     saveParams() {
         const params = {
             from: {
                 email: this.fromEmail,
-                name: this.fromName
+                name: this.fromName,
             },
             subject: this.subject,
             encode: this.encode,
@@ -144,11 +221,16 @@ class Bulk extends base_1.default {
         }
         return params;
     }
+    /**
+     * Prepares the parameters for updating the bulk delivery.
+     *
+     * @return {RequestParamsBulkUpdate} - The prepared parameters.
+     */
     updateParams() {
         return {
             from: {
                 email: this.fromEmail,
-                name: this.fromName
+                name: this.fromName,
             },
             subject: this.subject,
             to: this.to,
@@ -156,12 +238,18 @@ class Bulk extends base_1.default {
             html_part: this.htmlPart,
         };
     }
+    /**
+     * Prepares the parameters for committing the bulk delivery.
+     *
+     * @param {Date} [date] - The date to commit the delivery.
+     * @return {RequestParamsBulkCommit} - The prepared parameters.
+     */
     commitParams(date) {
         if (!date)
             return {};
         strftime_1.default.timezone(9 * 60);
         return {
-            reservation_time: (0, strftime_1.default)('%FT%T%z', date).replace('+0900', '+09:00')
+            reservation_time: (0, strftime_1.default)("%FT%T%z", date).replace("+0900", "+09:00"),
         };
     }
 }

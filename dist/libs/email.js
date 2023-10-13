@@ -13,20 +13,42 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const object_1 = __importDefault(require("./object"));
+/**
+ * Class representing an email, extending the BEObject class.
+ * Provides methods to get, save, create, update, and delete an email.
+ *
+ * @extends {BEObject}
+ */
 class Email extends object_1.default {
-    constructor(delivery_id) {
+    /**
+     * Constructs a new instance of the Email class.
+     *
+     * @param {number} deliveryId - The unique identifier for a delivery.
+     */
+    constructor(deliveryId) {
         super();
+        /**
+         * An object representing the insert code.
+         * @type {Object<string, string>}
+         */
         this.insertCode = {};
-        this.deliveryId = delivery_id;
+        this.deliveryId = deliveryId;
     }
+    /**
+     * Retrieves the email data.
+     *
+     * @async
+     * @return {Promise<number>} - The emailId.
+     * @throws Will throw an error if emailId is not found.
+     */
     get() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.emailId)
-                throw 'Email id is not found.';
+                throw new Error("Email id is not found.");
             const url = `/deliveries/-/emails/${this.emailId}`;
-            const res = yield Email.request.send('get', url);
-            res.insert_code.forEach(params => {
-                this.insertCode[params.key.replace(/__/, '')] = params.value;
+            const res = yield Email.request.send("get", url);
+            res.insert_code.forEach((params) => {
+                this.insertCode[params.key.replace(/__/, "")] = params.value;
             });
             this.address = res.email;
             this.createdTime = new Date(res.created_time);
@@ -34,6 +56,12 @@ class Email extends object_1.default {
             return this.emailId;
         });
     }
+    /**
+     * Saves the email data.
+     *
+     * @async
+     * @return {Promise<number>} - The emailId.
+     */
     save() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.emailId) {
@@ -44,38 +72,67 @@ class Email extends object_1.default {
             }
         });
     }
+    /**
+     * Creates a new email.
+     *
+     * @async
+     * @return {Promise<number>} - The emailId.
+     * @throws Will throw an error if deliveryId is not found.
+     */
     create() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.deliveryId)
-                throw 'Delivery id is not found.';
+                throw new Error("Delivery id is not found.");
             const url = `/deliveries/${this.deliveryId}/emails`;
-            const res = yield Email.request.send('post', url, this.getParams());
+            const res = yield Email.request
+                .send("post", url, this.getParams());
             this.emailId = res.email_id;
             return this.emailId;
         });
     }
+    /**
+     * Updates the email data.
+     *
+     * @async
+     * @return {Promise<number>} - The emailId.
+     * @throws Will throw an error if emailId is not found.
+     */
     update() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.emailId)
-                throw 'Email id is not found.';
+                throw new Error("Email id is not found.");
             const url = `/deliveries/-/emails/${this.emailId}`;
-            const res = yield Email.request.send('put', url, this.getParams());
+            yield Email.request
+                .send("put", url, this.getParams());
             return this.emailId;
         });
     }
+    /**
+     * Deletes the email data.
+     *
+     * @async
+     * @return {Promise<boolean>} - A boolean indicating success.
+     * @throws Will throw an error if emailId is not found.
+     */
     delete() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.emailId)
-                throw 'Email id is not found.';
+                throw new Error("Email id is not found.");
             const url = `/deliveries/-/emails/${this.emailId}`;
-            const res = yield Email.request.send('delete', url);
+            yield Email.request
+                .send("delete", url);
             return true;
         });
     }
+    /**
+     * Prepares the parameters for creating or updating an email.
+     *
+     * @return {RequestParamsEmailCreate} - The prepared parameters.
+     */
     getParams() {
         return {
             email: this.address,
-            insert_code: Object.keys(this.insertCode).map(key => {
+            insert_code: Object.keys(this.insertCode).map((key) => {
                 return { key: `__${key}__`, value: this.insertCode[key] };
             }),
         };

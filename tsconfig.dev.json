@@ -104,9 +104,5 @@
     "tests",
     "jest.config.ts",
     "dist"
-  ],
-  "parserOptions": {
-    "project": ["tsconfig.json", "tsconfig.dev.json", "jest.config.ts", ".eslintrc.js"],
-    "sourceType": "module",
-  }
+  ]
 }

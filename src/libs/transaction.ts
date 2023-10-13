@@ -1,63 +1,120 @@
-import Base from './base';
-import { BEReturnType, RequestParamsTransaction, SuccessFormat} from '../../types/';
+import Base from "./base";
+import {
+  RequestParamsTransaction,
+  SuccessFormat,
+} from "../../types/";
 
+/**
+ * Class representing a transaction operation, extending the Base class.
+ * Provides methods to send transaction deliveries.
+ *
+ * @extends {Base}
+ */
 export default class Transaction extends Base {
-	public to = '';
-	public cc: string[] = [];
-	public bcc: string[] = [];
+  /**
+   * The email address of the sender.
+   * @type {string}
+   */
+  public to = "";
 
-	public insert_code: {key: string, value: string}[] = [];
+  /**
+   * The email address of the sender as Cc.
+   * @type {string[]}
+   */
+  public cc: string[] = [];
 
-	setTo(email: string, insert_code?: {[key: string]: string}): BEReturnType {
-		this.to = email;
-		this.insert_code = this.hashToInsertCode(insert_code);
-		return this;
-	}
+  /**
+   * The email address of the sender as Bcc.
+   * @type {string[]}
+   */
+  public bcc: string[] = [];
 
-	addCc(email: string): BEReturnType {
-		if (this.cc.length >= 10) throw new Error('Cc is limited to 10.');
-		this.cc.push(email);
-		return this;
-	}
+  /**
+   * Replace the insert code in the email.
+   * @type {{key: string, value: string}[]}
+   */
+  public insert_code: {key: string, value: string}[] = [];
 
-	addBcc(email: string): BEReturnType {
-		if (this.bcc.length >= 10) throw new Error('Bcc is limited to 10.');
-		this.bcc.push(email);
-		return this;
-	}
+  /**
+   * Set a recipient to the transaction delivery.
+   *
+   * @param {string} email - The email address of the recipient.
+   * @param {InsertCode} insertCode - The insert code for the recipient.
+   * @return {BEReturnType} - The current instance.
+   */
+  setTo(email: string, insertCode?: {[key: string]: string}): Transaction {
+    this.to = email;
+    this.insert_code = this.hashToInsertCode(insertCode);
+    return this;
+  }
 
-	params(): RequestParamsTransaction {
-		const params: RequestParamsTransaction = {
-			from: {
-				email: this.fromEmail,
-				name: this.fromName
-			},
-			to: this.to,
-			subject: this.subject,
-			text_part: this.textPart,
-		};
-		if (this.insert_code.length > 0) {
-			params.insert_code = this.insert_code;
-		}
-		if (this.cc.length > 0) {
-			params.cc = this.cc;
-		}
-		if (this.bcc.length > 0) {
-			params.bcc = this.bcc;
-		}
-		if (this.htmlPart) {
-			params.html_part = this.htmlPart;
-		}
-		if (this.attachments.length > 0) {
-			params.attachments = this.attachments;
-		}
-		return params;
-	}
+  /**
+   * Add a recipient to the transaction delivery as Cc.
+   *
+   * @param {string} email - The email address of the recipient.
+   * @return {BEReturnType} - The current instance.
+   */
+  addCc(email: string): Transaction {
+    if (this.cc.length >= 10) throw new Error("Cc is limited to 10.");
+    this.cc.push(email);
+    return this;
+  }
 
-	async send(date?: Date): Promise<SuccessFormat> {
-		const url = '/deliveries/transaction';
-		const res = await Transaction.request.send('post', url, this.params());
-		this.deliveryId = res.delivery_id;
-		return res;
-	}
+  /**
+   * Add a recipient to the transaction delivery as Bcc.
+   *
+   * @param {string} email - The email address of the recipient.
+   * @return {BEReturnType} - The current instance.
+   */
+  addBcc(email: string): Transaction {
+    if (this.bcc.length >= 10) throw new Error("Bcc is limited to 10.");
+    this.bcc.push(email);
+    return this;
+  }
+
+  /**
+   * Prepares the parameters for sending the transaction delivery.
+   *
+   * @return {RequestParamsTransaction} - The prepared parameters.
+   */
+  params(): RequestParamsTransaction {
+    const params: RequestParamsTransaction = {
+      from: {
+        email: this.fromEmail,
+        name: this.fromName,
+      },
+      to: this.to,
+      subject: this.subject,
+      text_part: this.textPart,
+    };
+    if (this.insert_code.length > 0) {
+      params.insert_code = this.insert_code;
+    }
+    if (this.cc.length > 0) {
+      params.cc = this.cc;
+    }
+    if (this.bcc.length > 0) {
+      params.bcc = this.bcc;
+    }
+    if (this.htmlPart) {
+      params.html_part = this.htmlPart;
+    }
+    if (this.attachments.length > 0) {
+      params.attachments = this.attachments;
+    }
+    return params;
+  }
+
+  /**
+   * Sends the transaction delivery.
+   *
+   * @async
+   * @return {Promise<SuccessFormat>} - The success message.
+   */
+  async send(): Promise<SuccessFormat> {
+    const url = "/deliveries/transaction";
+    const res = await Transaction.request.send("post", url, this.params());
+    this.deliveryId = res.delivery_id;
+    return res;
+  }
 }

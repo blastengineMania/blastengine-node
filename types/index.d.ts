@@ -1,12 +1,15 @@
-declare module '*/config.json' {
+import Transaction from "../src/libs/transaction";
+import Bulk from "../src/libs/bulk";
+
+declare module "*/config.json" {
   interface ConfigData {
     userId: string;
     apiKey: string;
-		from: {
-			email: string;
-			name: string;
-		},
-		to: string;
+    from: {
+      email: string;
+      name: string;
+    },
+    to: string;
   }
 
   const value: ConfigData;
@@ -14,16 +17,16 @@ declare module '*/config.json' {
 }
 
 export type RequestParamsBulkBegin = {
-	from: {
-		email: string,
-		name: string,
-	},
-	subject: string,
-	encode: string,
-	text_part: string,
-	html_part: string,
-	attachments?: Attachment[],
-	file?: Attachment,
+  from: {
+    email: string,
+    name: string,
+  },
+  subject: string,
+  encode: string,
+  text_part: string,
+  html_part: string,
+  attachments?: Attachment[],
+  file?: Attachment,
 };
 
 export type InsertCode = {
@@ -37,34 +40,34 @@ export type BulkUpdateTo = {
 }
 
 export type UsageResponseDataFormat = {
-	month: number;
-	current: number;
-	remaining: number;
-	update_time: string;
-	plan_id: string;
+  month: number;
+  current: number;
+  remaining: number;
+  update_time: string;
+  plan_id: string;
 }
 
 export type UsageResponseFormat = {
-	data: UsageResponseDataFormat[];
+  data: UsageResponseDataFormat[];
 }
 
 export type RequestParamsFile = {
-	file: Attachment,
+  file: Attachment,
 }
 
 export type RequestParamsUsage = {
-	month_ago: number,
+  month_ago: number,
 }
 
 export type RequestParamsBulkUpdate = {
-	from: {
-		email: string,
-		name: string,
-	},
+  from: {
+    email: string,
+    name: string,
+  },
   to?: BulkUpdateTo[],
-	subject: string,
-	text_part: string,
-	html_part: string,
+  subject: string,
+  text_part: string,
+  html_part: string,
 };
 
 export type RequestParamsBulkCommit = {
@@ -72,57 +75,57 @@ export type RequestParamsBulkCommit = {
 }
 
 export type RequestParamsTransaction = {
-	from: {
-		email: string,
-		name: string,
-	},
-	to: string,
-	cc?: string[],
-	bcc?: string[],
-	insert_code?: InsertCode[],
-	subject: string,
-	encode?: string,
-	text_part: string,
-	html_part?: string,
-	attachments?: Attachment[],
+  from: {
+    email: string,
+    name: string,
+  },
+  to: string,
+  cc?: string[],
+  bcc?: string[],
+  insert_code?: InsertCode[],
+  subject: string,
+  encode?: string,
+  text_part: string,
+  html_part?: string,
+  attachments?: Attachment[],
 };
 
 export type RequestParamsBulkImport = {
-	file?: Attachment
+  file?: Attachment
 }
 
 export type Attachment = Blob | Buffer | string;
 
 export type BEReturnType = Transaction | Bulk;
 
-export type RequestParams = RequestParamsTransaction | 
-	RequestParamsBulkBegin |
-	RequestParamsBulkUpdate |
-	RequestParamsBulkCommit |
-	RequestParamsFile |
-	RequestParamsUsage |
-	RequestParamsEmailCreate;
+export type RequestParams = RequestParamsTransaction |
+  RequestParamsBulkBegin |
+  RequestParamsBulkUpdate |
+  RequestParamsBulkCommit |
+  RequestParamsFile |
+  RequestParamsUsage |
+  RequestParamsEmailCreate;
 
 export type SuccessFormat = {
-	delivery_id?: number,
-	job_id?: number,
+  delivery_id?: number,
+  job_id?: number,
 };
 
 export type JobResponseFormat = {
-	percentage: number,
-	status: string,
-	success_count: number,
-	failed_count: number,
-	total_count: number,
-	error_file_url: string,
+  percentage: number,
+  status: string,
+  success_count: number,
+  failed_count: number,
+  total_count: number,
+  error_file_url: string,
 };
 
 export type GetResponseFormat = {
   delivery_id: number,
   from: {
-		email: string,
-		name: string,
-	},
+    email: string,
+    name: string,
+  },
   delivery_type: string,
   status: string,
   subject: string,
@@ -134,128 +137,133 @@ export type GetResponseFormat = {
   open_count: number,
   text_part: string,
   html_part: string,
-  attaches: [any],
-  delivery_time: string?,
-  reservation_time: string?,
+  attaches: [unknown],
+  delivery_time?: string,
+  reservation_time?: string,
   created_time: string,
   updated_time: string,
 }
 
 export type GetEmailResponseFormat = {
-	email_id: number,
-	email: string,
-	delivery_id: number,
-	insert_code: [InsertCode],
-	created_time: string,
-	updated_time: string,
+  email_id: number,
+  email: string,
+  delivery_id: number,
+  insert_code: [InsertCode],
+  created_time: string,
+  updated_time: string,
 }
 
 export type RequestParamsEmailCreate = {
-	email: string,
-	insert_code: {[key: string]: string}[],
+  email: string,
+  insert_code: {[key: string]: string}[],
 }
 
 export type CreateEmailResponseFormat = {
-	email_id: number,
+  email_id: number,
 }
 
 export type GetReportResponseFormat = {
-	percentage: number,
-	status: string,
-	total_count: number,
-	mail_open_file_url: string,
+  percentage: number,
+  status: string,
+  total_count: number,
+  mail_open_file_url: string,
 }
 
 
 export type GetErrorReportResponseFormat = {
-	percentage: number,
-	status: string,
-	total_count: number,
-	error_file_url: string,
+  percentage: number,
+  status: string,
+  total_count: number,
+  error_file_url: string,
 }
 
 export type MailConfig = {
-	to: {
-		email: string,
-		insert_code?: {[key: string]: string},
-	}[],
-	cc?: string[],
-	bcc?: string[],
-	subject?: string,
-	text_part?: string,
-	html_part?: string,
-	attachments?: Attachment[] = [],
-	encode?: string,
-	from?: {
-		email: string,
-		name: string,
-	}
+  to: {
+    email: string,
+    insert_code?: {[key: string]: string},
+  }[],
+  cc?: string[],
+  bcc?: string[],
+  subject?: string,
+  text_part?: string,
+  html_part?: string,
+  attachments?: Attachment[],
+  encode?: string,
+  from?: {
+    email: string,
+    name: string,
+  }
 };
 
-export type SendStatus = 'EDIT' | 'IMPORTING' | 'RESERVE' | 'WAIT'	| 'SENDING' | 'SENT' | 'FAILED' | 'HARDERROR' | 'SOFTERROR' | 'DROP' | 'RETRY';
-export type DeliveryType = 'TRANSACTION' | 'BULK' | 'SMTP' | 'ALL';
-export type SortType = 'delivery_time:desc' | 'delivery_time:asc' | 'updated_time:desc' | 'updated_time:asc';
-export type ResponseCode = 250 | 421 | 450 | 451 | 452 | 453 | 454 | 500 | 521 | 530 | 550 | 551 | 552 | 553 | 554;
+export type SendStatus = "EDIT" | "IMPORTING" | "RESERVE" |
+  "WAIT" | "SENDING" | "SENT" | "FAILED" | "HARDERROR" |
+  "SOFTERROR" | "DROP" | "RETRY";
+
+export type DeliveryType = "TRANSACTION" | "BULK" | "SMTP" | "ALL";
+export type SortType = "delivery_time:desc" | "delivery_time:asc" |
+    "updated_time:desc" | "updated_time:asc";
+export type ResponseCode = 250 | 421 | 450 | 451 | 452 | 453 |
+  454 | 500 | 521 | 530 | 550 | 551 | 552 | 553 | 554;
 
 export type SearchCondition = {
-	text_part?: string,
-	html_part?: string,
-	subject?: string,
-	from?: string,
-	status?: SendStatus[],
-	delivery_type?: DeliveryType[],
-	delivery_start?: Date | string,
-	delivery_end?: Date | string,
-	size?: number,
-	page?: number,
-	sort?: SortType,
+  text_part?: string,
+  html_part?: string,
+  subject?: string,
+  from?: string,
+  status?: SendStatus[],
+  delivery_type?: DeliveryType[],
+  delivery_start?: Date | string,
+  delivery_end?: Date | string,
+  size?: number,
+  page?: number,
+  sort?: SortType,
 };
 
 export type SearchResponse = {
-	data: SearchResult[],
+  data: SearchResult[],
 };
 
 export type SearchResult = {
-	updated_time: string,
+  updated_time: string,
   created_time: string,
   delivery_type: string,
   subject: string,
   delivery_id: number,
   from: {
-		email: string,
-		name: string,
-	}
+    email: string,
+    name: string,
+  }
   reservation_time?: string,
   delivery_time: string,
   status: string,
 }
 
 export type SearchLogCondition = {
-	anchor?: number,
-	count?: number,
-	email?: string,
-	delivery_type?: DeliveryType[],
-	delivery_id?: number,
-	status?: SendStatus[],
-	response_code?: ResponseCode[],
-	delivery_start?: Date | string,
-	delivery_end?: Date | string,
+  anchor?: number,
+  count?: number,
+  email?: string,
+  delivery_type?: DeliveryType[],
+  delivery_id?: number,
+  status?: SendStatus[],
+  response_code?: ResponseCode[],
+  delivery_start?: Date | string,
+  delivery_end?: Date | string,
 };
 
 export type SearchLogResponse = {
-	data: SearchLogResult[],
+  data: SearchLogResult[],
 };
 
 export type SearchLogResult = {
-	delivery_time: string,
-	delivery_id: number,
-	maillog_id: number,
-	delivery_type: string,
-	email: string,
-	status: string,
-	last_response_code: string,
-	last_response_message: string,
-	open_time: string,
-	created_time: string,
-	updated_time: string,
+  delivery_time: string,
+  delivery_id: number,
+  maillog_id: number,
+  delivery_type: string,
+  email: string,
+  status: string,
+  last_response_code: string,
+  last_response_message: string,
+  open_time: string,
+  created_time: string,
+  updated_time: string,
 };

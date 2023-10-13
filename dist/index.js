@@ -19,7 +19,17 @@ const mail_1 = __importDefault(require("./libs/mail"));
 exports.Mail = mail_1.default;
 const log_1 = __importDefault(require("./libs/log"));
 exports.Log = log_1.default;
+/**
+ * BlastEngine class is responsible for managing user authentication
+ * and making authenticated requests.
+ */
 class BlastEngine {
+    /**
+     * Creates a new instance of BlastEngine.
+     *
+     * @param {string} userId - The user identifier.
+     * @param {string} apiKey - The API key.
+     */
     constructor(userId, apiKey) {
         this.userId = userId;
         this.apiKey = apiKey;
@@ -27,19 +37,25 @@ class BlastEngine {
         const request = new request_1.default(this.token);
         object_1.default.request = request;
     }
+    /**
+     * Generates a token based on the user credentials,
+     * and sets the token property on the instance.
+     *
+     * @throws Will throw an error if userId or apiKey is not provided.
+     */
     generateToken() {
         if (!this.userId)
-            throw 'There is no userId';
+            throw new Error("There is no userId");
         if (!this.apiKey)
-            throw 'There is no apiKey';
+            throw new Error("There is no apiKey");
         const str = `${this.userId}${this.apiKey}`;
         const hashHex = crypto_1.default
-            .createHash('sha256')
-            .update(str, 'utf8')
-            .digest('hex');
+            .createHash("sha256")
+            .update(str, "utf8")
+            .digest("hex");
         this.token = Buffer
             .from(hashHex.toLowerCase())
-            .toString('base64');
+            .toString("base64");
     }
 }
 exports.BlastEngine = BlastEngine;

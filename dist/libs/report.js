@@ -14,27 +14,65 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const object_1 = __importDefault(require("./object"));
 const jszip_1 = __importDefault(require("jszip"));
+/**
+ * The Report class extends the BEObject to handle the creation, retrieval,
+ * and downloading of analysis reports related to email delivery.
+ */
 class Report extends object_1.default {
+    /**
+     * Constructs a new instance of the Report class.
+     *
+     * @param {number} deliveryId - The unique identifier for a delivery.
+     */
     constructor(deliveryId) {
         super();
+        /**
+         * The percentage of the report.
+         * @type {number}
+         */
         this.percentage = 0;
-        this.status = '';
-        this.mailOpenFileUrl = '';
+        /**
+         * The status of the report.
+         * @type {string}
+         */
+        this.status = "";
+        /**
+         * The URL of the report.
+         * @type {string}
+         */
+        this.mailOpenFileUrl = "";
+        /**
+         * The total count of the report.
+         * @type {number}
+         */
         this.totalCount = 0;
         this.deliveryId = deliveryId;
     }
+    /**
+     * Creates a new report.
+     *
+     * @async
+     * @return {Promise<number>} - The Job ID associated with the report.
+     */
     create() {
         return __awaiter(this, void 0, void 0, function* () {
             const url = `/deliveries/${this.deliveryId}/analysis/report`;
-            const res = yield Report.request.send('post', url);
+            const res = yield Report.request.send("post", url);
             this.jobId = res.job_id;
             return this.jobId;
         });
     }
+    /**
+     * Retrieves the report data.
+     *
+     * @async
+     * @return {Promise<void>}
+     */
     get() {
         return __awaiter(this, void 0, void 0, function* () {
             const path = `/deliveries/-/analysis/report/${this.jobId}`;
-            const res = yield Report.request.send('get', path);
+            const res = yield Report.request
+                .send("get", path);
             this.percentage = res.percentage;
             this.status = res.status;
             if (res.total_count) {
@@ -45,6 +83,12 @@ class Report extends object_1.default {
             }
         });
     }
+    /**
+     * Checks if the report is finished.
+     *
+     * @async
+     * @return {Promise<boolean>} - True if the report is finished.
+     */
     finished() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.jobId)
@@ -53,6 +97,12 @@ class Report extends object_1.default {
             return this.percentage === 100;
         });
     }
+    /**
+     * Downloads the report.
+     *
+     * @async
+     * @return {Promise<any>} - The report.
+     */
     download() {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.report)
@@ -60,11 +110,11 @@ class Report extends object_1.default {
             if (this.percentage < 100)
                 return null;
             const url = `/deliveries/-/analysis/report/${this.jobId}/download`;
-            const buffer = yield Report.request.send('get', url);
+            const buffer = yield Report.request.send("get", url);
             const jsZip = yield jszip_1.default.loadAsync(buffer);
             const fileName = Object.keys(jsZip.files)[0];
             const zipObject = jsZip.files[fileName];
-            this.report = yield zipObject.async('text');
+            this.report = yield zipObject.async("text");
             return this.report;
         });
     }
