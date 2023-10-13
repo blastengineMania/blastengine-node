@@ -1,5 +1,5 @@
 import BEObject from "./object";
-import JSZip from "jszip";
+import * as JSZip from "jszip";
 import {SuccessFormat, GetReportResponseFormat} from "../../types/";
 
 /**

@@ -3,7 +3,7 @@ import strftime from "strftime";
 import Job from "./job";
 import Email from "./email";
 import {file} from "tmp-promise";
-import fs from "fs";
+import * as fs from "fs";
 import {promisify} from "util";
 import {
   Attachment,

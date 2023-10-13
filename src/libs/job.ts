@@ -1,7 +1,7 @@
 // import {BlastEngine} from "..";
 // import {promisify} from "util";
 import BEObject from "./object";
-import JSZip from "jszip";
+import * as JSZip from "jszip";
 import {JobResponseFormat} from "../../types/";
 
 /**
@@ -106,7 +106,7 @@ export default class Job extends BEObject {
       const fileName = Object.keys(jsZip.files)[0];
       const zipObject = jsZip.files[fileName];
       this.report = await zipObject.async("text");
-      return this.report;
+      return this.report!;
     } catch (e) {
       const error = JSON.parse(e as string);
       if (error &&
