@@ -135,7 +135,7 @@ export default class BERequest {
     request: SuperAgentRequest,
     params: RequestParamsTransaction): Promise<SuperAgentRequest> {
     for (const file of params.attachments!) {
-      request.attach("file", file);
+      request.attach("file", file as Blob);
     }
     delete params.attachments;
     if (params) {
@@ -159,7 +159,7 @@ export default class BERequest {
    */
   async sendFile(request: SuperAgentRequest, file: Attachment):
     Promise<SuperAgentRequest> {
-    request.attach("file", file!, {contentType: "text/csv"});
+    request.attach("file", file! as Blob, {contentType: "text/csv"});
     return request
       .type("form");
   }
