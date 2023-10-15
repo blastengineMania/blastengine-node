@@ -14,8 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const object_1 = __importDefault(require("./object"));
 const jszip_1 = __importDefault(require("jszip"));
-const strftime_1 = __importDefault(require("strftime"));
-strftime_1.default.timezone(9 * 60);
+const date_fns_tz_1 = require("date-fns-tz");
 /**
  * Class representing an error report, extending the BEObject class.
  * Provides methods to set error report parameters,
@@ -62,7 +61,8 @@ class ErrorReport extends object_1.default {
      * @return {ErrorReport} - The current instance.
      */
     setErrorStart(start) {
-        this._errorStart = (0, strftime_1.default)("%FT%T%z", start).replace("+0900", "+09:00");
+        this._errorStart = (0, date_fns_tz_1.format)(start, "%FT%T%z", { timeZone: "Asia/Tokyo" })
+            .replace("+0900", "+09:00");
         return this;
     }
     /**
@@ -72,7 +72,8 @@ class ErrorReport extends object_1.default {
      * @return {ErrorReport} - The current instance.
      */
     setErrorEnd(end) {
-        this._errorEnd = (0, strftime_1.default)("%FT%T%z", end).replace("+0900", "+09:00");
+        this._errorEnd = (0, date_fns_tz_1.format)(end, "%FT%T%z", { timeZone: "Asia/Tokyo" })
+            .replace("+0900", "+09:00");
         return this;
     }
     /**

@@ -1,5 +1,5 @@
 import Base from "./base";
-import strftime from "strftime";
+import {format} from "date-fns-tz";
 import Job from "./job";
 import Email from "./email";
 import {file} from "tmp-promise";
@@ -230,9 +230,10 @@ export default class Bulk extends Base {
    */
   commitParams(date?: Date): RequestParamsBulkCommit {
     if (!date) return {};
-    strftime.timezone(9 * 60);
+    const reservationTime = format(date, "%FT%T%z", {timeZone: "Asia/Tokyo"})
+      .replace("+0900", "+09:00");
     return {
-      reservation_time: strftime("%FT%T%z", date).replace("+0900", "+09:00"),
+      reservation_time: reservationTime,
     };
   }
 }

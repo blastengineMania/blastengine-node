@@ -1,9 +1,7 @@
 import BEObject from "./object";
 import JSZip from "jszip";
-import strftime from "strftime";
+import {format} from "date-fns-tz";
 import {GetErrorReportResponseFormat, SuccessFormat} from "../../types/";
-
-strftime.timezone(9 * 60);
 
 /**
  * Class representing an error report, extending the BEObject class.
@@ -80,7 +78,8 @@ export default class ErrorReport extends BEObject {
    * @return {ErrorReport} - The current instance.
    */
   setErrorStart(start: Date): ErrorReport {
-    this._errorStart = strftime("%FT%T%z", start).replace("+0900", "+09:00");
+    this._errorStart = format(start, "%FT%T%z", {timeZone: "Asia/Tokyo"})
+      .replace("+0900", "+09:00");
     return this;
   }
 
@@ -91,7 +90,8 @@ export default class ErrorReport extends BEObject {
    * @return {ErrorReport} - The current instance.
    */
   setErrorEnd(end: Date): ErrorReport {
-    this._errorEnd = strftime("%FT%T%z", end).replace("+0900", "+09:00");
+    this._errorEnd = format(end, "%FT%T%z", {timeZone: "Asia/Tokyo"})
+      .replace("+0900", "+09:00");
     return this;
   }
 

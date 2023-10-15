@@ -36,7 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const base_1 = __importDefault(require("./base"));
-const strftime_1 = __importDefault(require("strftime"));
+const date_fns_tz_1 = require("date-fns-tz");
 const job_1 = __importDefault(require("./job"));
 const email_1 = __importDefault(require("./email"));
 const tmp_promise_1 = require("tmp-promise");
@@ -270,9 +270,10 @@ class Bulk extends base_1.default {
     commitParams(date) {
         if (!date)
             return {};
-        strftime_1.default.timezone(9 * 60);
+        const reservationTime = (0, date_fns_tz_1.format)(date, "%FT%T%z", { timeZone: "Asia/Tokyo" })
+            .replace("+0900", "+09:00");
         return {
-            reservation_time: (0, strftime_1.default)("%FT%T%z", date).replace("+0900", "+09:00"),
+            reservation_time: reservationTime,
         };
     }
 }

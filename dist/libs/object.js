@@ -26,8 +26,8 @@ class BEObject {
      * @return {BEObject} - The current instance to allow method chaining.
      */
     set(key, value) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const dummy = { key, value };
+        const dummy = { key, value }; // @typescript-eslint/no-unused-vars
+        console.log(dummy);
         return this;
     }
 }

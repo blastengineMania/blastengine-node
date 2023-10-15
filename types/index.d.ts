@@ -1,5 +1,8 @@
+// / <reference types="node" />
+
 import Transaction from "../src/libs/transaction";
 import Bulk from "../src/libs/bulk";
+// import {Blob} from "buffer";
 
 declare module "*/config.json" {
   interface ConfigData {
