@@ -5,7 +5,7 @@ import {
   SuccessFormat,
   RequestParamsTransaction,
 } from "../../types/";
-
+import {Blob} from "buffer";
 
 /**
  * The `BERequest` class provides a structured way to handle HTTP requests
