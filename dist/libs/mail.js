@@ -84,11 +84,11 @@ class Mail extends base_1.default {
      */
     addTo(email, insertCode) {
         Object.keys(insertCode || {}).forEach((key) => {
-            if (key.length > 20) {
-                throw new Error("Insert code key is limited to 20.");
+            if (key.length > 16) {
+                throw new Error("Insert code key is limited to 16.");
             }
-            if (key.length < 5) {
-                throw new Error("Insert code key is required at least 5.");
+            if (key.length < 1) {
+                throw new Error("Insert code key is required at least 1.");
             }
         });
         this.params.to.push({ email, insert_code: insertCode });
