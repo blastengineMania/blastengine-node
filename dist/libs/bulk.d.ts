@@ -1,7 +1,7 @@
 import Base from "./base";
 import Job from "./job";
 import Email from "./email";
-import { Attachment, BulkUpdateTo, SuccessFormat, RequestParamsBulkBegin, RequestParamsBulkUpdate, RequestParamsBulkCommit } from "../../types/";
+import { Attachment, BulkUpdateTo, RequestParamsBulkBegin, RequestParamsBulkUpdate, RequestParamsBulkCommit, SuccessJsonFormat } from "../../types/";
 type InsertCode = {
     [key: string]: string;
 };
@@ -23,7 +23,7 @@ export default class Bulk extends Base {
      * @async
      * @return {Promise<SuccessFormat>} - The result of the registration.
      */
-    register(): Promise<SuccessFormat>;
+    register(): Promise<SuccessJsonFormat>;
     /**
      * Imports a file for bulk update.
      *
@@ -40,7 +40,7 @@ export default class Bulk extends Base {
      * @return {Promise<SuccessFormat>} - The result of the update.
      * @throws Will throw an error if deliveryId is not found.
      */
-    update(): Promise<SuccessFormat>;
+    update(): Promise<SuccessJsonFormat>;
     /**
      * Creates a CSV string from the provided data.
      *
@@ -53,10 +53,10 @@ export default class Bulk extends Base {
      *
      * @async
      * @param {Date} [date] - The date to send the delivery.
-     * @return {Promise<SuccessFormat>} - The result of the send operation.
+     * @return {Promise<SuccessJsonFormat>} - The result of the send operation.
      * @throws Will throw an error if deliveryId is not found.
      */
-    send(date?: Date): Promise<SuccessFormat>;
+    send(date?: Date): Promise<SuccessJsonFormat>;
     /**
      * Deletes the bulk delivery.
      *
@@ -64,15 +64,15 @@ export default class Bulk extends Base {
      * @return {Promise<SuccessFormat>} - The result of the delete operation.
      * @throws Will throw an error if deliveryId is not found.
      */
-    delete(): Promise<SuccessFormat>;
+    delete(): Promise<SuccessJsonFormat>;
     /**
      * Cancels the bulk delivery.
      *
      * @async
-     * @return {Promise<SuccessFormat>} - The result of the cancel operation.
+     * @return {Promise<SuccessJsonFormat>} - The result of the cancel operation.
      * @throws Will throw an error if deliveryId is not found.
      */
-    cancel(): Promise<SuccessFormat>;
+    cancel(): Promise<SuccessJsonFormat>;
     /**
      * Gets an Email instance for the current bulk delivery.
      *

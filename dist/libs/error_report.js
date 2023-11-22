@@ -53,6 +53,11 @@ class ErrorReport extends object_1.default {
          * @type {number[]}
          */
         this._responseCode = [];
+        /**
+         * The format of error report date.
+         * @type {string}
+         */
+        this._format = "yyyy-MM-dd'T'HH:mm:ssXXX";
     }
     /**
      * Sets the start time for the error report.
@@ -61,8 +66,7 @@ class ErrorReport extends object_1.default {
      * @return {ErrorReport} - The current instance.
      */
     setErrorStart(start) {
-        this._errorStart = (0, date_fns_tz_1.format)(start, "%FT%T%z", { timeZone: "Asia/Tokyo" })
-            .replace("+0900", "+09:00");
+        this._errorStart = (0, date_fns_tz_1.format)(start, this._format, { timeZone: "Asia/Tokyo" });
         return this;
     }
     /**
@@ -72,8 +76,7 @@ class ErrorReport extends object_1.default {
      * @return {ErrorReport} - The current instance.
      */
     setErrorEnd(end) {
-        this._errorEnd = (0, date_fns_tz_1.format)(end, "%FT%T%z", { timeZone: "Asia/Tokyo" })
-            .replace("+0900", "+09:00");
+        this._errorEnd = (0, date_fns_tz_1.format)(end, this._format, { timeZone: "Asia/Tokyo" });
         return this;
     }
     /**
@@ -159,7 +162,7 @@ class ErrorReport extends object_1.default {
                     yield this.create();
                 }
                 catch (e) {
-                    const messages = JSON.parse(e);
+                    const messages = JSON.parse(e.message);
                     if (messages.error_messages &&
                         messages.error_messages.main &&
                         messages.error_messages.main[0] === "no data found.") {

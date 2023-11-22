@@ -1,5 +1,5 @@
 import Base from "./base";
-import { RequestParamsTransaction, SuccessFormat } from "../../types/";
+import { RequestParamsTransaction, SuccessJsonFormat } from "../../types/";
 /**
  * Class representing a transaction operation, extending the Base class.
  * Provides methods to send transaction deliveries.
@@ -64,7 +64,7 @@ export default class Transaction extends Base {
      * Sends the transaction delivery.
      *
      * @async
-     * @return {Promise<SuccessFormat>} - The success message.
+     * @return {Promise<SuccessJsonFormat>} - The success message.
      */
-    send(): Promise<SuccessFormat>;
+    send(): Promise<SuccessJsonFormat>;
 }

@@ -101,7 +101,8 @@ export default class Job extends BEObject {
     if (this.report) return this.report;
     const url = `/deliveries/-/emails/import/${this.id}/errorinfo/download`;
     try {
-      const buffer = await Job.request.send("get", url) as Buffer;
+      const buffer = await Job.request
+        .send("get", url, {binary: true}) as Buffer;
       const jsZip = await JSZip.loadAsync(buffer);
       const fileName = Object.keys(jsZip.files)[0];
       const zipObject = jsZip.files[fileName];

@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const base_1 = __importDefault(require("./base"));
 const bulk_1 = __importDefault(require("./bulk"));
 const transaction_1 = __importDefault(require("./transaction"));
-const qs_1 = __importDefault(require("qs"));
 /**
  * Class representing a mail, extending the Base class.
  * Provides methods to set mail properties,
@@ -71,11 +70,8 @@ class Mail extends base_1.default {
             if ((params === null || params === void 0 ? void 0 : params.delivery_end) && params.delivery_end instanceof Date) {
                 params.delivery_end = params.delivery_end.toISOString();
             }
-            const query = params ?
-                qs_1.default.stringify(params).replace(/%5B[0-9]?%5D/g, "%5B%5D") :
-                "";
-            const url = `/deliveries?${query}`;
-            const res = yield Mail.request.send("get", url);
+            const url = "/deliveries";
+            const res = yield Mail.request.send("get", url, params);
             return res.data.map((params) => Mail.fromJson(params));
         });
     }

@@ -66,7 +66,8 @@ class Bulk extends base_1.default {
     register() {
         return __awaiter(this, void 0, void 0, function* () {
             const url = "/deliveries/bulk/begin";
-            const res = yield Bulk.request.send("post", url, this.saveParams());
+            const res = yield Bulk.request
+                .send("post", url, this.saveParams());
             this.deliveryId = res.delivery_id;
             return res;
         });
@@ -113,7 +114,8 @@ class Bulk extends base_1.default {
                 delete params.to;
             }
             const url = `/deliveries/bulk/update/${this.deliveryId}`;
-            const res = yield Bulk.request.send("put", url, params);
+            const res = yield Bulk.request
+                .send("put", url, params);
             return res;
         });
     }
@@ -153,7 +155,7 @@ class Bulk extends base_1.default {
      *
      * @async
      * @param {Date} [date] - The date to send the delivery.
-     * @return {Promise<SuccessFormat>} - The result of the send operation.
+     * @return {Promise<SuccessJsonFormat>} - The result of the send operation.
      * @throws Will throw an error if deliveryId is not found.
      */
     send(date) {
@@ -163,7 +165,8 @@ class Bulk extends base_1.default {
             const url = date ?
                 `/deliveries/bulk/commit/${this.deliveryId}` :
                 `/deliveries/bulk/commit/${this.deliveryId}/immediate`;
-            const res = yield Bulk.request.send("patch", url, this.commitParams(date));
+            const res = yield Bulk.request
+                .send("patch", url, this.commitParams(date));
             return res;
         });
     }
@@ -179,7 +182,8 @@ class Bulk extends base_1.default {
             if (!this.deliveryId)
                 throw new Error("Delivery id is not found.");
             const url = `/deliveries/${this.deliveryId}`;
-            const res = yield Bulk.request.send("delete", url);
+            const res = yield Bulk.request
+                .send("delete", url);
             return res;
         });
     }
@@ -187,7 +191,7 @@ class Bulk extends base_1.default {
      * Cancels the bulk delivery.
      *
      * @async
-     * @return {Promise<SuccessFormat>} - The result of the cancel operation.
+     * @return {Promise<SuccessJsonFormat>} - The result of the cancel operation.
      * @throws Will throw an error if deliveryId is not found.
      */
     cancel() {
@@ -195,7 +199,8 @@ class Bulk extends base_1.default {
             if (!this.deliveryId)
                 throw new Error("Delivery id is not found.");
             const url = `/deliveries/${this.deliveryId}/cancel`;
-            const res = yield Bulk.request.send("patch", url);
+            const res = yield Bulk.request
+                .send("patch", url);
             return res;
         });
     }

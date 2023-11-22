@@ -2,6 +2,8 @@ import { BlastEngine, Mail } from '../src/';
 import config from './config.json';
 import path from 'path';
 
+jest.setTimeout(30000);
+
 describe('Test of mail', () => {
 	beforeAll(() => {
 		new BlastEngine(config.userId, config.apiKey);

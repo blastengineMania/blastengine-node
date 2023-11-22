@@ -1,6 +1,9 @@
 import BEObject from "./object";
 import * as JSZip from "jszip";
-import {SuccessFormat, GetReportResponseFormat} from "../../types/";
+import {
+  GetReportResponseFormat,
+  SuccessJsonFormat,
+} from "../../types/";
 
 /**
  * The Report class extends the BEObject to handle the creation, retrieval,
@@ -61,7 +64,8 @@ export default class Report extends BEObject {
    */
   async create(): Promise<number> {
     const url = `/deliveries/${this.deliveryId}/analysis/report`;
-    const res = await Report.request.send("post", url) as SuccessFormat;
+    const res = await Report.request
+      .send("post", url) as SuccessJsonFormat;
     this.jobId = res.job_id!;
     return this.jobId;
   }

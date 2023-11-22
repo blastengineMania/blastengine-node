@@ -4,7 +4,6 @@ import {
   SearchLogResponse,
   SearchLogResult,
 } from "../../types/";
-import qs from "qs";
 
 /**
  * Class representing a log, extending the BEObject class.
@@ -111,11 +110,8 @@ export default class Log extends BEObject {
     if (params?.delivery_end && params.delivery_end instanceof Date) {
       params.delivery_end = params.delivery_end.toISOString();
     }
-    const query = params ?
-      qs.stringify(params).replace(/%5B[0-9]?%5D/g, "%5B%5D") :
-      "";
-    const url = `/logs/mails/results?${query}`;
-    const res = await Log.request.send("get", url) as SearchLogResponse;
+    const url = "/logs/mails/results";
+    const res = await Log.request.send("get", url, params) as SearchLogResponse;
     return res.data.map((params) => Log.fromJson(params));
   }
 }

@@ -1,7 +1,11 @@
 import BEObject from "./object";
 import JSZip from "jszip";
 import {format} from "date-fns-tz";
-import {GetErrorReportResponseFormat, SuccessFormat} from "../../types/";
+import {
+  ErrorMessage,
+  GetErrorReportResponseFormat,
+  SuccessJsonFormat,
+} from "../../types/";
 
 /**
  * Class representing an error report, extending the BEObject class.
@@ -65,6 +69,12 @@ export default class ErrorReport extends BEObject {
   private _responseCode: number[] = [];
 
   /**
+   * The format of error report date.
+   * @type {string}
+   */
+  private _format: string = "yyyy-MM-dd'T'HH:mm:ssXXX";
+
+  /**
    * Constructs a new instance of the ErrorReport class.
    */
   constructor() {
@@ -78,8 +88,7 @@ export default class ErrorReport extends BEObject {
    * @return {ErrorReport} - The current instance.
    */
   setErrorStart(start: Date): ErrorReport {
-    this._errorStart = format(start, "%FT%T%z", {timeZone: "Asia/Tokyo"})
-      .replace("+0900", "+09:00");
+    this._errorStart = format(start, this._format, {timeZone: "Asia/Tokyo"});
     return this;
   }
 
@@ -90,8 +99,7 @@ export default class ErrorReport extends BEObject {
    * @return {ErrorReport} - The current instance.
    */
   setErrorEnd(end: Date): ErrorReport {
-    this._errorEnd = format(end, "%FT%T%z", {timeZone: "Asia/Tokyo"})
-      .replace("+0900", "+09:00");
+    this._errorEnd = format(end, this._format, {timeZone: "Asia/Tokyo"});
     return this;
   }
 
@@ -133,7 +141,8 @@ export default class ErrorReport extends BEObject {
       body["response_code"] = this._responseCode;
     }
     const res = await ErrorReport.request
-      .send("post", url, body) as SuccessFormat;
+      .send("post", url, body) as SuccessJsonFormat;
+
     this.jobId = res.job_id!;
     return this.jobId!;
   }
@@ -173,7 +182,8 @@ export default class ErrorReport extends BEObject {
       try {
         await this.create();
       } catch (e: unknown) {
-        const messages = JSON.parse(e as string);
+        const messages = JSON.parse(
+          (e as Error).message as string) as ErrorMessage;
         if (messages.error_messages &&
           messages.error_messages.main &&
           messages.error_messages.main[0] === "no data found.") {

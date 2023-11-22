@@ -1,6 +1,8 @@
 import { BlastEngine, ErrorReport } from '../src';
 import config from './config.json';
 
+jest.setTimeout(300000);
+
 describe('Test of begin', () => {
 	let client: BlastEngine;
 	beforeAll(async () => {
@@ -10,18 +12,11 @@ describe('Test of begin', () => {
 	describe('Get test report', () => {
 		test('Getting successful', async () => {
 			const report = new ErrorReport;
-			try {
-				report.setErrorStart(new Date('2023-03-01'));
-				while (await report.finished() === false) {
-					await new Promise((resolve) => setTimeout(resolve, 100));
-				}
-				const res = await report.download();
-				console.log(res);
-				// expect(res).toBeInstanceOf(Array);
-			} catch (e) {
-				console.error({ e });
-				expect(true).toBe(false);
+			report.setErrorStart(new Date('2023-09-01'));
+			while (await report.finished() === false) {
+				await new Promise((resolve) => setTimeout(resolve, 100));
 			}
+			const res = await report.download();
 		});
 	});
 });

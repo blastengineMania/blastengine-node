@@ -6,10 +6,10 @@ describe('Test of mail', () => {
 		new BlastEngine(config.userId, config.apiKey);
 	});
 
-	describe('Delete editing bulk', () => {
-		test('Search mail', async () => {
-			const logs = await Log.find({ delivery_type: ['SMTP'] });
-			expect(logs[0].deliveryType).toBe('SMTP');
+	describe('Search email log', () => {
+		test('Search email by deliveryType', async () => {
+			const logs = await Log.find({ delivery_type: ['BULK'] });
+			expect(logs[0].deliveryType).toBe('BULK');
 		});
 	});
 });

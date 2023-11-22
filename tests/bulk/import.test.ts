@@ -30,9 +30,10 @@ describe('Test of begin', () => {
 					await new Promise((resolve) => setTimeout(resolve, 100));
 				}
 			} catch (e) {
-				console.error({ e });
+				console.error(e);
 				// expect(true).toBe(false);
 			}
+			await new Promise((resolve) => setTimeout(resolve, 1000));
 			await bulk.delete();
 		});
 	});

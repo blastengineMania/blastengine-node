@@ -60,6 +60,11 @@ export default class ErrorReport extends BEObject {
      */
     private _responseCode;
     /**
+     * The format of error report date.
+     * @type {string}
+     */
+    private _format;
+    /**
      * Constructs a new instance of the ErrorReport class.
      */
     constructor();

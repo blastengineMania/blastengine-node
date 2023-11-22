@@ -1,7 +1,7 @@
 import Base from "./base";
 import {
   RequestParamsTransaction,
-  SuccessFormat,
+  SuccessJsonFormat,
 } from "../../types/";
 
 /**
@@ -109,11 +109,12 @@ export default class Transaction extends Base {
    * Sends the transaction delivery.
    *
    * @async
-   * @return {Promise<SuccessFormat>} - The success message.
+   * @return {Promise<SuccessJsonFormat>} - The success message.
    */
-  async send(): Promise<SuccessFormat> {
+  async send(): Promise<SuccessJsonFormat> {
     const url = "/deliveries/transaction";
-    const res = await Transaction.request.send("post", url, this.params());
+    const res = await Transaction.request
+      .send("post", url, this.params()) as SuccessJsonFormat;
     this.deliveryId = res.delivery_id;
     return res;
   }

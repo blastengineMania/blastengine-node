@@ -80,7 +80,8 @@ class Report extends object_1.default {
     create() {
         return __awaiter(this, void 0, void 0, function* () {
             const url = `/deliveries/${this.deliveryId}/analysis/report`;
-            const res = yield Report.request.send("post", url);
+            const res = yield Report.request
+                .send("post", url);
             this.jobId = res.job_id;
             return this.jobId;
         });

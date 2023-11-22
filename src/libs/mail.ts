@@ -1,7 +1,6 @@
 import Base from "./base";
 import Bulk from "./bulk";
 import Transaction from "./transaction";
-import qs from "qs";
 import {
   MailConfig,
   SearchCondition,
@@ -63,12 +62,8 @@ export default class Mail extends Base {
     if (params?.delivery_end && params.delivery_end instanceof Date) {
       params.delivery_end = params.delivery_end.toISOString();
     }
-
-    const query = params ?
-      qs.stringify(params).replace(/%5B[0-9]?%5D/g, "%5B%5D") :
-      "";
-    const url = `/deliveries?${query}`;
-    const res = await Mail.request.send("get", url) as SearchResponse;
+    const url = "/deliveries";
+    const res = await Mail.request.send("get", url, params) as SearchResponse;
     return res.data.map((params) => Mail.fromJson(params));
   }
 

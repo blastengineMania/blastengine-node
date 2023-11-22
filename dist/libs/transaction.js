@@ -115,12 +115,13 @@ class Transaction extends base_1.default {
      * Sends the transaction delivery.
      *
      * @async
-     * @return {Promise<SuccessFormat>} - The success message.
+     * @return {Promise<SuccessJsonFormat>} - The success message.
      */
     send() {
         return __awaiter(this, void 0, void 0, function* () {
             const url = "/deliveries/transaction";
-            const res = yield Transaction.request.send("post", url, this.params());
+            const res = yield Transaction.request
+                .send("post", url, this.params());
             this.deliveryId = res.delivery_id;
             return res;
         });

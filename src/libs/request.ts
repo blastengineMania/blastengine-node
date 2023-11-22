@@ -1,11 +1,15 @@
-import request, {SuperAgentRequest} from "superagent";
+import fetch, {Response, RequestInit} from "node-fetch";
+import FormData from "form-data";
+import {Blob} from "buffer";
+import fs from "fs";
+import qs from "qs";
+
 import {
   RequestParams,
   Attachment,
   SuccessFormat,
   RequestParamsTransaction,
 } from "../../types/";
-import {Blob} from "buffer";
 
 /**
  * The `BERequest` class provides a structured way to handle HTTP requests
@@ -36,7 +40,8 @@ export default class BERequest {
    * @return {SuperAgentRequest} - The configured SuperAgentRequest object.
    * @throws Will throw an error if the method is not supported.
    */
-  getRequest(method: string, url: string): SuperAgentRequest {
+  /*
+  getRequest(method: string, url: string): Response {
     switch (method.toUpperCase()) {
     case "GET":
       return request.get(url);
@@ -52,6 +57,7 @@ export default class BERequest {
       throw new Error(`${method} is not support.`);
     }
   }
+  */
 
   /**
    * Checks if the given parameters contain attachments.
@@ -79,28 +85,39 @@ export default class BERequest {
   async send(method: string, path: string, params?: RequestParams):
     Promise<SuccessFormat> {
     try {
-      const request = this.getRequest(method, `https://app.engn.jp/api/v1${path}`);
-      request
-        .set("Authorization", `Bearer ${this.token}`);
+      const requestInit: RequestInit = {
+        method,
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      };
+      const url = `https://app.engn.jp/api/v1${path}`;
       const attachments = this.hasAttachment(params);
       if (attachments) {
         const res = await this.
-          sendAttachment(request, params as RequestParamsTransaction);
-        return res.body as SuccessFormat;
+          sendAttachment(url, requestInit, params as RequestParamsTransaction);
+        return res.json() as SuccessFormat;
       }
       if (params && "file" in params) {
         // Upload Email
-        const res = await this.sendFile(request, params!.file!);
-        return res.body as SuccessFormat;
+        const res = await this.sendFile(url, requestInit, params!.file!);
+        return res.json() as SuccessFormat;
+      } else if (params && "binary" in params) {
+        const res = await this.sendJson(url, requestInit);
+        return Buffer.from(await res.arrayBuffer());
       } else {
-        const res = await this.sendJson(request, params);
-        return res.body as SuccessFormat;
+        const res = await this.sendJson(url, requestInit, params);
+        const json = await res.json();
+        if (json && json.error_messages) {
+          throw new Error(JSON.stringify(json));
+        }
+        return json as SuccessFormat;
       }
     } catch (e: unknown) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if ("response" in (e as any)) {
-        const err = e as request.ResponseError;
-        throw new Error(err.response!.text);
+        const err = e as Response;
+        throw new Error(err.body!.toString());
       }
       throw e;
     }
@@ -108,59 +125,77 @@ export default class BERequest {
 
   /**
    * Sends a JSON payload as part of a HTTP request.
-   * @param {SuperAgentRequest} request - The SuperAgentRequest object.
+   * @param {string} url - The URL to send the request to.
+   * @param {RequestInit} requestInit - The Parameters to send the request to.
    * @param {RequestParams | undefined} params - The request parameters.
-   * @return {Promise<SuperAgentRequest>} - The updated
-   * SuperAgentRequest object.
+   * @return {Promise<Response>} - The updated
    */
-  async sendJson(request: SuperAgentRequest, params?: RequestParams):
-    Promise<SuperAgentRequest> {
-    if (request.method.toUpperCase() === "GET") {
-      const qs = new URLSearchParams(params as Record<string, string>);
-      request.query(qs.toString());
+  async sendJson(url: string, requestInit: RequestInit, params?: RequestParams):
+    Promise<Response> {
+    if (requestInit.method!.toUpperCase() === "GET") {
+      const query = params ?
+        qs.stringify(params).replace(/%5B[0-9]?%5D/g, "%5B%5D") :
+        "";
+      url = `${url}?${query}`;
+    } else if (requestInit.method!.toUpperCase() === "POST" ||
+      requestInit.method!.toUpperCase() === "PUT") {
+      requestInit.body = JSON.stringify(params);
     }
-    return request
-      .send(params)
-      .set("Content-Type", "application/json");
+    requestInit.headers = {
+      ...requestInit.headers,
+      "Content-Type": "application/json",
+    };
+    return fetch(url, requestInit);
   }
 
   /**
    * Sends attachments as part of a HTTP request.
-   * @param {SuperAgentRequest} request - The SuperAgentRequest object.
+   * @param {string} url - The URL to send the request to.
+   * @param {RequestInit} requestInit - The Parameters to send the request to.
    * @param {RequestParamsTransaction} params - The request parameters.
-   * @return {Promise<SuperAgentRequest>} - The updated
-   * SuperAgentRequest object.
+   * @return {Promise<Response>} - The updated
    */
   async sendAttachment(
-    request: SuperAgentRequest,
-    params: RequestParamsTransaction): Promise<SuperAgentRequest> {
+    url: string,
+    requestInit: RequestInit,
+    params: RequestParamsTransaction): Promise<Response> {
+    const formData = new FormData();
     for (const file of params.attachments!) {
-      request.attach("file", file as Blob);
+      if (typeof file === "string") {
+        formData.append("file", fs.createReadStream(file));
+      } else {
+        formData.append("file", file as Blob);
+      }
     }
     delete params.attachments;
     if (params) {
-      request
-        .attach(
-          "data",
-          Buffer.from(JSON.stringify(params)),
-          {contentType: "application/json"}
-        );
+      formData.append("data", Buffer.from(JSON.stringify(params)), {
+        contentType: "application/json",
+      });
     }
-    return request
-      .type("form");
+    requestInit.body = formData;
+    return fetch(url, requestInit);
   }
 
   /**
    * Sends a file as part of a HTTP request.
-   * @param {SuperAgentRequest} request - The SuperAgentRequest object.
-   * @param {Attachment} file - The file to be sent.
-   * @return {Promise<SuperAgentRequest>} - The updated
-   * SuperAgentRequest object.
+   * @param {string} url - The URL to send the request to.
+   * @param {RequestInit} requestInit - The Parameters to send the request to.
+   * @param {Attachment} file - The file to send.
+   * @return {Promise<Response>} - The updated
    */
-  async sendFile(request: SuperAgentRequest, file: Attachment):
-    Promise<SuperAgentRequest> {
-    request.attach("file", file! as Blob, {contentType: "text/csv"});
-    return request
-      .type("form");
+  async sendFile(
+    url: string,
+    requestInit: RequestInit,
+    file: Attachment):
+    Promise<Response> {
+    const formData = new FormData();
+    if (typeof file === "string") {
+      formData.append("file", fs.createReadStream(file));
+    } else {
+      formData.append("file", file as Blob);
+    }
+    requestInit.body = formData;
+    return fetch(url, requestInit);
   }
 }

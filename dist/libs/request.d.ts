@@ -1,4 +1,4 @@
-import { SuperAgentRequest } from "superagent";
+import { Response, RequestInit } from "node-fetch";
 import { RequestParams, Attachment, SuccessFormat, RequestParamsTransaction } from "../../types/";
 /**
  * The `BERequest` class provides a structured way to handle HTTP requests
@@ -25,7 +25,6 @@ export default class BERequest {
      * @return {SuperAgentRequest} - The configured SuperAgentRequest object.
      * @throws Will throw an error if the method is not supported.
      */
-    getRequest(method: string, url: string): SuperAgentRequest;
     /**
      * Checks if the given parameters contain attachments.
      * @param {RequestParams | undefined} params - The request parameters.
@@ -44,26 +43,26 @@ export default class BERequest {
     send(method: string, path: string, params?: RequestParams): Promise<SuccessFormat>;
     /**
      * Sends a JSON payload as part of a HTTP request.
-     * @param {SuperAgentRequest} request - The SuperAgentRequest object.
+     * @param {string} url - The URL to send the request to.
+     * @param {RequestInit} requestInit - The Parameters to send the request to.
      * @param {RequestParams | undefined} params - The request parameters.
-     * @return {Promise<SuperAgentRequest>} - The updated
-     * SuperAgentRequest object.
+     * @return {Promise<Response>} - The updated
      */
-    sendJson(request: SuperAgentRequest, params?: RequestParams): Promise<SuperAgentRequest>;
+    sendJson(url: string, requestInit: RequestInit, params?: RequestParams): Promise<Response>;
     /**
      * Sends attachments as part of a HTTP request.
-     * @param {SuperAgentRequest} request - The SuperAgentRequest object.
+     * @param {string} url - The URL to send the request to.
+     * @param {RequestInit} requestInit - The Parameters to send the request to.
      * @param {RequestParamsTransaction} params - The request parameters.
-     * @return {Promise<SuperAgentRequest>} - The updated
-     * SuperAgentRequest object.
+     * @return {Promise<Response>} - The updated
      */
-    sendAttachment(request: SuperAgentRequest, params: RequestParamsTransaction): Promise<SuperAgentRequest>;
+    sendAttachment(url: string, requestInit: RequestInit, params: RequestParamsTransaction): Promise<Response>;
     /**
      * Sends a file as part of a HTTP request.
-     * @param {SuperAgentRequest} request - The SuperAgentRequest object.
-     * @param {Attachment} file - The file to be sent.
-     * @return {Promise<SuperAgentRequest>} - The updated
-     * SuperAgentRequest object.
+     * @param {string} url - The URL to send the request to.
+     * @param {RequestInit} requestInit - The Parameters to send the request to.
+     * @param {Attachment} file - The file to send.
+     * @return {Promise<Response>} - The updated
      */
-    sendFile(request: SuperAgentRequest, file: Attachment): Promise<SuperAgentRequest>;
+    sendFile(url: string, requestInit: RequestInit, file: Attachment): Promise<Response>;
 }

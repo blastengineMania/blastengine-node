@@ -105,7 +105,8 @@ class Job extends object_1.default {
                 return this.report;
             const url = `/deliveries/-/emails/import/${this.id}/errorinfo/download`;
             try {
-                const buffer = yield Job.request.send("get", url);
+                const buffer = yield Job.request
+                    .send("get", url, { binary: true });
                 const jsZip = yield JSZip.loadAsync(buffer);
                 const fileName = Object.keys(jsZip.files)[0];
                 const zipObject = jsZip.files[fileName];

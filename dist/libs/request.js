@@ -12,7 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const superagent_1 = __importDefault(require("superagent"));
+const node_fetch_1 = __importDefault(require("node-fetch"));
+const form_data_1 = __importDefault(require("form-data"));
+const fs_1 = __importDefault(require("fs"));
+const qs_1 = __importDefault(require("qs"));
 /**
  * The `BERequest` class provides a structured way to handle HTTP requests
  * to a specified API, managing headers,
@@ -35,22 +38,24 @@ class BERequest {
      * @return {SuperAgentRequest} - The configured SuperAgentRequest object.
      * @throws Will throw an error if the method is not supported.
      */
-    getRequest(method, url) {
-        switch (method.toUpperCase()) {
-            case "GET":
-                return superagent_1.default.get(url);
-            case "POST":
-                return superagent_1.default.post(url);
-            case "PUT":
-                return superagent_1.default.put(url);
-            case "DELETE":
-                return superagent_1.default.delete(url);
-            case "PATCH":
-                return superagent_1.default.patch(url);
-            default:
-                throw new Error(`${method} is not support.`);
-        }
+    /*
+    getRequest(method: string, url: string): Response {
+      switch (method.toUpperCase()) {
+      case "GET":
+        return request.get(url);
+      case "POST":
+        return request.post(url);
+      case "PUT":
+        return request.put(url);
+      case "DELETE":
+        return request.delete(url);
+      case "PATCH":
+        return request.patch(url);
+      default:
+        throw new Error(`${method} is not support.`);
+      }
     }
+    */
     /**
      * Checks if the given parameters contain attachments.
      * @param {RequestParams | undefined} params - The request parameters.
@@ -78,30 +83,42 @@ class BERequest {
     send(method, path, params) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const request = this.getRequest(method, `https://app.engn.jp/api/v1${path}`);
-                request
-                    .set("Authorization", `Bearer ${this.token}`);
+                const requestInit = {
+                    method,
+                    headers: {
+                        Authorization: `Bearer ${this.token}`,
+                    },
+                };
+                const url = `https://app.engn.jp/api/v1${path}`;
                 const attachments = this.hasAttachment(params);
                 if (attachments) {
                     const res = yield this.
-                        sendAttachment(request, params);
-                    return res.body;
+                        sendAttachment(url, requestInit, params);
+                    return res.json();
                 }
                 if (params && "file" in params) {
                     // Upload Email
-                    const res = yield this.sendFile(request, params.file);
-                    return res.body;
+                    const res = yield this.sendFile(url, requestInit, params.file);
+                    return res.json();
+                }
+                else if (params && "binary" in params) {
+                    const res = yield this.sendJson(url, requestInit);
+                    return Buffer.from(yield res.arrayBuffer());
                 }
                 else {
-                    const res = yield this.sendJson(request, params);
-                    return res.body;
+                    const res = yield this.sendJson(url, requestInit, params);
+                    const json = yield res.json();
+                    if (json && json.error_messages) {
+                        throw new Error(JSON.stringify(json));
+                    }
+                    return json;
                 }
             }
             catch (e) {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 if ("response" in e) {
                     const err = e;
-                    throw new Error(err.response.text);
+                    throw new Error(err.body.toString());
                 }
                 throw e;
             }
@@ -109,55 +126,73 @@ class BERequest {
     }
     /**
      * Sends a JSON payload as part of a HTTP request.
-     * @param {SuperAgentRequest} request - The SuperAgentRequest object.
+     * @param {string} url - The URL to send the request to.
+     * @param {RequestInit} requestInit - The Parameters to send the request to.
      * @param {RequestParams | undefined} params - The request parameters.
-     * @return {Promise<SuperAgentRequest>} - The updated
-     * SuperAgentRequest object.
+     * @return {Promise<Response>} - The updated
      */
-    sendJson(request, params) {
+    sendJson(url, requestInit, params) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (request.method.toUpperCase() === "GET") {
-                const qs = new URLSearchParams(params);
-                request.query(qs.toString());
+            if (requestInit.method.toUpperCase() === "GET") {
+                const query = params ?
+                    qs_1.default.stringify(params).replace(/%5B[0-9]?%5D/g, "%5B%5D") :
+                    "";
+                url = `${url}?${query}`;
             }
-            return request
-                .send(params)
-                .set("Content-Type", "application/json");
+            else if (requestInit.method.toUpperCase() === "POST" ||
+                requestInit.method.toUpperCase() === "PUT") {
+                requestInit.body = JSON.stringify(params);
+            }
+            requestInit.headers = Object.assign(Object.assign({}, requestInit.headers), { "Content-Type": "application/json" });
+            return (0, node_fetch_1.default)(url, requestInit);
         });
     }
     /**
      * Sends attachments as part of a HTTP request.
-     * @param {SuperAgentRequest} request - The SuperAgentRequest object.
+     * @param {string} url - The URL to send the request to.
+     * @param {RequestInit} requestInit - The Parameters to send the request to.
      * @param {RequestParamsTransaction} params - The request parameters.
-     * @return {Promise<SuperAgentRequest>} - The updated
-     * SuperAgentRequest object.
+     * @return {Promise<Response>} - The updated
      */
-    sendAttachment(request, params) {
+    sendAttachment(url, requestInit, params) {
         return __awaiter(this, void 0, void 0, function* () {
+            const formData = new form_data_1.default();
             for (const file of params.attachments) {
-                request.attach("file", file);
+                if (typeof file === "string") {
+                    formData.append("file", fs_1.default.createReadStream(file));
+                }
+                else {
+                    formData.append("file", file);
+                }
             }
             delete params.attachments;
             if (params) {
-                request
-                    .attach("data", Buffer.from(JSON.stringify(params)), { contentType: "application/json" });
+                formData.append("data", Buffer.from(JSON.stringify(params)), {
+                    contentType: "application/json",
+                });
             }
-            return request
-                .type("form");
+            requestInit.body = formData;
+            return (0, node_fetch_1.default)(url, requestInit);
         });
     }
     /**
      * Sends a file as part of a HTTP request.
-     * @param {SuperAgentRequest} request - The SuperAgentRequest object.
-     * @param {Attachment} file - The file to be sent.
-     * @return {Promise<SuperAgentRequest>} - The updated
-     * SuperAgentRequest object.
+     * @param {string} url - The URL to send the request to.
+     * @param {RequestInit} requestInit - The Parameters to send the request to.
+     * @param {Attachment} file - The file to send.
+     * @return {Promise<Response>} - The updated
      */
-    sendFile(request, file) {
+    sendFile(url, requestInit, file) {
         return __awaiter(this, void 0, void 0, function* () {
-            request.attach("file", file, { contentType: "text/csv" });
-            return request
-                .type("form");
+            const formData = new form_data_1.default();
+            if (typeof file === "string") {
+                formData.append("file", fs_1.default.createReadStream(file));
+            }
+            else {
+                formData.append("file", file);
+            }
+            requestInit.body = formData;
+            return (0, node_fetch_1.default)(url, requestInit);
         });
     }
 }

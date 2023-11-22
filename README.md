@@ -151,6 +151,12 @@ await usage.get();
 const usage = await Usage.getLatest();
 ```
 
+### ChangeLog
+
+#### 2.3.0
+
+Change from Superagent to node-fetch.
+
 ### License
 
 MIT.

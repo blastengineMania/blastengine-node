@@ -105,12 +105,17 @@ export type RequestParams = RequestParamsTransaction |
   RequestParamsBulkCommit |
   RequestParamsFile |
   RequestParamsUsage |
-  RequestParamsEmailCreate;
+  RequestParamsEmailCreate |
+  SearchLogCondition |
+  {binary: boolean};
 
-export type SuccessFormat = {
+export type SuccessJsonFormat = {
   delivery_id?: number,
   job_id?: number,
 };
+
+export type SuccessFormat = SuccessJsonFormat | Buffer;
+
 
 export type JobResponseFormat = {
   percentage: number,
@@ -268,3 +273,8 @@ export type SearchLogResult = {
   created_time: string,
   updated_time: string,
 };
+
+
+export type ErrorMessage = {
+  error_messages: {[key: string]: string[]}
+}

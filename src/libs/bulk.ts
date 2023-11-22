@@ -8,10 +8,10 @@ import {promisify} from "util";
 import {
   Attachment,
   BulkUpdateTo,
-  SuccessFormat,
   RequestParamsBulkBegin,
   RequestParamsBulkUpdate,
   RequestParamsBulkCommit,
+  SuccessJsonFormat,
 } from "../../types/";
 
 type InsertCode = {[key: string]: string};
@@ -34,9 +34,10 @@ export default class Bulk extends Base {
    * @async
    * @return {Promise<SuccessFormat>} - The result of the registration.
    */
-  async register(): Promise<SuccessFormat> {
+  async register(): Promise<SuccessJsonFormat> {
     const url = "/deliveries/bulk/begin";
-    const res = await Bulk.request.send("post", url, this.saveParams());
+    const res = await Bulk.request
+      .send("post", url, this.saveParams()) as SuccessJsonFormat;
     this.deliveryId = res.delivery_id;
     return res;
   }
@@ -54,7 +55,7 @@ export default class Bulk extends Base {
     const url = `/deliveries/${this.deliveryId!}/emails/import`;
     const res = await Bulk.request.send("post", url, {
       file: filePath,
-    });
+    }) as SuccessJsonFormat;
     return new Job(res.job_id!);
   }
 
@@ -65,7 +66,7 @@ export default class Bulk extends Base {
    * @return {Promise<SuccessFormat>} - The result of the update.
    * @throws Will throw an error if deliveryId is not found.
    */
-  async update(): Promise<SuccessFormat> {
+  async update(): Promise<SuccessJsonFormat> {
     if (!this.deliveryId) throw new Error("Delivery id is not found.");
     const params = this.updateParams();
     if (params.to && params.to.length > 50) {
@@ -79,7 +80,8 @@ export default class Bulk extends Base {
       delete params.to;
     }
     const url = `/deliveries/bulk/update/${this.deliveryId!}`;
-    const res = await Bulk.request.send("put", url, params);
+    const res = await Bulk.request
+      .send("put", url, params) as SuccessJsonFormat;
     return res;
   }
 
@@ -117,15 +119,16 @@ export default class Bulk extends Base {
    *
    * @async
    * @param {Date} [date] - The date to send the delivery.
-   * @return {Promise<SuccessFormat>} - The result of the send operation.
+   * @return {Promise<SuccessJsonFormat>} - The result of the send operation.
    * @throws Will throw an error if deliveryId is not found.
    */
-  async send(date?: Date): Promise<SuccessFormat> {
+  async send(date?: Date): Promise<SuccessJsonFormat> {
     if (!this.deliveryId) throw new Error("Delivery id is not found.");
     const url = date ?
       `/deliveries/bulk/commit/${this.deliveryId!}` :
       `/deliveries/bulk/commit/${this.deliveryId}/immediate`;
-    const res = await Bulk.request.send("patch", url, this.commitParams(date));
+    const res = await Bulk.request
+      .send("patch", url, this.commitParams(date)) as SuccessJsonFormat;
     return res;
   }
 
@@ -136,10 +139,11 @@ export default class Bulk extends Base {
    * @return {Promise<SuccessFormat>} - The result of the delete operation.
    * @throws Will throw an error if deliveryId is not found.
    */
-  async delete(): Promise<SuccessFormat> {
+  async delete(): Promise<SuccessJsonFormat> {
     if (!this.deliveryId) throw new Error("Delivery id is not found.");
     const url = `/deliveries/${this.deliveryId!}`;
-    const res = await Bulk.request.send("delete", url);
+    const res = await Bulk.request
+      .send("delete", url) as SuccessJsonFormat;
     return res;
   }
 
@@ -147,13 +151,14 @@ export default class Bulk extends Base {
    * Cancels the bulk delivery.
    *
    * @async
-   * @return {Promise<SuccessFormat>} - The result of the cancel operation.
+   * @return {Promise<SuccessJsonFormat>} - The result of the cancel operation.
    * @throws Will throw an error if deliveryId is not found.
    */
-  async cancel(): Promise<SuccessFormat> {
+  async cancel(): Promise<SuccessJsonFormat> {
     if (!this.deliveryId) throw new Error("Delivery id is not found.");
     const url = `/deliveries/${this.deliveryId!}/cancel`;
-    const res = await Bulk.request.send("patch", url);
+    const res = await Bulk.request
+      .send("patch", url) as SuccessJsonFormat;
     return res;
   }
 

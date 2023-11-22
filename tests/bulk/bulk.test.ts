@@ -1,4 +1,5 @@
 import { BlastEngine, Bulk } from '../../src';
+import { SuccessFormat, SuccessJsonFormat } from '../../types';
 import config from '../config.json';
 
 describe('Test of begin', () => {
@@ -45,7 +46,7 @@ describe('Test of begin', () => {
 				expect(`${res.delivery_id}`).toMatch(/[0-9]+/);
 				bulk.addTo(config.to, {key: '__code1__', value: '値'});
 				const updateRes = await bulk.update();
-				expect(updateRes.delivery_id! === bulk.delivery_id!);
+				expect(updateRes.delivery_id! === bulk.deliveryId!);
 				await bulk.delete();
 			} catch (e) {
 				console.error({ e });
@@ -64,9 +65,9 @@ describe('Test of begin', () => {
 				bulk.addTo(config.to, {key: '__code1__', value: '値'});
 				bulk.addTo('test@moongift.jp', {key: '__code1__', value: '値2'});
 				const updateRes = await bulk.update();
-				expect(updateRes.delivery_id! === bulk.delivery_id!);
+				expect(updateRes.delivery_id! === bulk.deliveryId!);
 				const sendRes = await bulk.send();
-				expect(sendRes.delivery_id! === bulk.delivery_id!);
+				expect(sendRes.delivery_id! === bulk.deliveryId!);
 			} catch (e) {
 				console.error({ e });
 				expect(true).toBe(false);

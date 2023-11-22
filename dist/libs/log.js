@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const object_1 = __importDefault(require("./object"));
-const qs_1 = __importDefault(require("qs"));
 /**
  * Class representing a log, extending the BEObject class.
  * Provides methods to set log properties,
@@ -99,11 +98,8 @@ class Log extends object_1.default {
             if ((params === null || params === void 0 ? void 0 : params.delivery_end) && params.delivery_end instanceof Date) {
                 params.delivery_end = params.delivery_end.toISOString();
             }
-            const query = params ?
-                qs_1.default.stringify(params).replace(/%5B[0-9]?%5D/g, "%5B%5D") :
-                "";
-            const url = `/logs/mails/results?${query}`;
-            const res = yield Log.request.send("get", url);
+            const url = "/logs/mails/results";
+            const res = yield Log.request.send("get", url, params);
             return res.data.map((params) => Log.fromJson(params));
         });
     }
