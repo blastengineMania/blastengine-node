@@ -78,8 +78,8 @@ console.log(res);
 #### Update & add delivery address to bulk
 
 ```js
-bulk.setTo('test1@example.jp', {key: '__code1__', value: 'value!'});
-bulk.setTo('test2@example.jp', {key: '__code1__', value: 'value2!'});
+bulk.addTo('test1@example.jp', {key: '__code1__', value: 'value!'});
+bulk.addTo('test2@example.jp', {key: '__code1__', value: 'value2!'});
 const updateRes = await bulk.update();
 console.log(updateRes);
 // { delivery_id: 22 }
