@@ -26,6 +26,42 @@ const { BlastEngine, Transaction, Bulk } = require('blastengine');
 new BlastEngine(config.userId, config.apiKey);
 ```
 
+### Transaction & Bulk email
+
+```ts
+const mail = new Mail;
+mail
+	.setFrom(config.from.email, config.from.name)
+	.setSubject('Test subject')
+	// Add to
+	.addTo('user1@example.com', {name: 'User1', code: 'code1'})
+	.addTo('user2@example.com', {name: 'User2', code: 'code2'})
+	// Add cc
+	.addCc('cc1@example.com')
+	.addCc('cc2@example.com')
+	// Add bcc
+	.addBcc('bcc1@example.com')
+	.addBcc('bcc2@example.com')
+	// Add attachment
+	.addAttachment('file.png')
+	.addAttachment('another.png')
+	// Set body
+	.setText('Content of email __name__, __code__')
+	.setHtml('<h1>Content of email<h1> <p>__name__, __code__</p>');
+```
+
+#### Send email immediately
+
+```js
+await mail.send();
+```
+
+#### Send email later
+
+```js
+await mail.send(new Date('2021-08-01 00:00:00'));
+```
+
 ### Transaction email
 
 #### No attachment email
