@@ -7,6 +7,7 @@ import {
   Attachment,
   GetResponseFormat,
   InsertCode,
+  Unsubscribed,
 } from "../../types/";
 
 type FromFormat = {
@@ -62,6 +63,10 @@ export default class Base extends BEObject {
    * @type {string}
    */
   public url?: string;
+  /**
+   * Information of unsubscribed
+   */
+  public unsubscribe: Unsubscribed = {};
   /**
    * The attachments of the message.
    * @type {Attachment[]}
@@ -271,10 +276,21 @@ export default class Base extends BEObject {
    * Adds an attachment to the message.
    *
    * @param {Attachment} file - The file to be attached.
-   * @return {BEReturnType} - The current instance.
+   * @return {Base} - The current instance.
    */
   addAttachment(file: Attachment): Base {
     this.attachments.push(file);
+    return this;
+  }
+  /**
+   * Set unsubscribe information
+   *
+   * @param {Unsubscribed} params - Information of unsubscribe.
+   * @return {Base} - The current instance.
+   */
+  setUnsubscribe({email, url}: Unsubscribed): Base {
+    if (email) this.unsubscribe.email = email;
+    if (url) this.unsubscribe.url = url;
     return this;
   }
 

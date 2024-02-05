@@ -203,6 +203,15 @@ export default class Bulk extends Base {
       text_part: this.textPart,
       html_part: this.htmlPart,
     };
+    if (this.unsubscribe) {
+      params.list_unsubscribe = {};
+      if (this.unsubscribe.email) {
+        params.list_unsubscribe.mailto = `mailto:${this.unsubscribe.email}`;
+      }
+      if (this.unsubscribe.url) {
+        params.list_unsubscribe.url = this.unsubscribe.url;
+      }
+    }
     if (this.attachments.length > 0) {
       params.attachments = this.attachments;
     }
@@ -215,7 +224,7 @@ export default class Bulk extends Base {
    * @return {RequestParamsBulkUpdate} - The prepared parameters.
    */
   updateParams(): RequestParamsBulkUpdate {
-    return {
+    const params: RequestParamsBulkUpdate = {
       from: {
         email: this.fromEmail,
         name: this.fromName,
@@ -225,6 +234,16 @@ export default class Bulk extends Base {
       text_part: this.textPart,
       html_part: this.htmlPart,
     };
+    if (this.unsubscribe) {
+      params.list_unsubscribe = {};
+      if (this.unsubscribe.email) {
+        params.list_unsubscribe.mailto = `mailto:${this.unsubscribe.email}`;
+      }
+      if (this.unsubscribe.url) {
+        params.list_unsubscribe.url = this.unsubscribe.url;
+      }
+    }
+    return params;
   }
 
   /**

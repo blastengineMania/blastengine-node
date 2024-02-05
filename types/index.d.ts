@@ -28,12 +28,26 @@ export type RequestParamsBulkBegin = {
   html_part: string,
   attachments?: Attachment[],
   file?: Attachment,
+  list_unsubscribe?: {
+    mailto?: string;
+    url?: string;
+  }
 };
 
 export type InsertCode = {
   key: string,
   value: string,
 };
+
+export type Unsubscribed = {
+  email?: string;
+  url?: string;
+}
+
+export type UnsubscribedParmas = {
+  mailto?: string;
+  url?: string;
+}
 
 export type BulkUpdateTo = {
   email: string,
@@ -69,6 +83,7 @@ export type RequestParamsBulkUpdate = {
   subject: string,
   text_part: string,
   html_part: string,
+  list_unsubscribe?: UnsubscribedParmas,
 };
 
 export type RequestParamsBulkCommit = {
@@ -89,6 +104,7 @@ export type RequestParamsTransaction = {
   text_part: string,
   html_part?: string,
   attachments?: Attachment[],
+  list_unsubscribe?: UnsubscribedParmas,
 };
 
 export type RequestParamsBulkImport = {
@@ -211,7 +227,7 @@ export type SortType = "delivery_time:desc" | "delivery_time:asc" |
 export type ResponseCode = 250 | 421 | 450 | 451 | 452 | 453 |
   454 | 500 | 521 | 530 | 550 | 551 | 552 | 553 | 554;
 
-export type SearchCondition = {
+export interface SearchCondition {
   text_part?: string,
   html_part?: string,
   subject?: string,
@@ -223,7 +239,12 @@ export type SearchCondition = {
   size?: number,
   page?: number,
   sort?: SortType,
-};
+}
+
+export interface SearchAllCondition extends SearchCondition {
+  list_unsubscribe_mailto?: string,
+  list_unsubscribe_url?: string,
+}
 
 export type SearchResponse = {
   data: SearchResult[],

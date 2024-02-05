@@ -1,6 +1,6 @@
 import BEObject from "./object";
 import Report from "./report";
-import { Attachment, InsertCode } from "../../types/";
+import { Attachment, InsertCode, Unsubscribed } from "../../types/";
 /**
  * The Base class extends BEObject and serves as a foundation for
  * handling various message attributes and operations in the context
@@ -49,6 +49,10 @@ export default class Base extends BEObject {
      * @type {string}
      */
     url?: string;
+    /**
+     * Information of unsubscribed
+     */
+    unsubscribe: Unsubscribed;
     /**
      * The attachments of the message.
      * @type {Attachment[]}
@@ -171,9 +175,16 @@ export default class Base extends BEObject {
      * Adds an attachment to the message.
      *
      * @param {Attachment} file - The file to be attached.
-     * @return {BEReturnType} - The current instance.
+     * @return {Base} - The current instance.
      */
     addAttachment(file: Attachment): Base;
+    /**
+     * Set unsubscribe information
+     *
+     * @param {Unsubscribed} params - Information of unsubscribe.
+     * @return {Base} - The current instance.
+     */
+    setUnsubscribe({ email, url }: Unsubscribed): Base;
     /**
      * Retrieves information about the delivery, based on the deliveryId.
      *

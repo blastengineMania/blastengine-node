@@ -7,6 +7,8 @@ import {
   SearchResponse,
   SearchResult,
   Attachment,
+  Unsubscribed,
+  SearchAllCondition,
 } from "../../types/";
 
 /**
@@ -55,7 +57,8 @@ export default class Mail extends Base {
    * @return {Promise<(Bulk | Transaction)[]>} - The search results.
    * @static
    */
-  static async find(params?: SearchCondition): Promise<(Bulk | Transaction)[]> {
+  static async find(params?: SearchCondition):
+    Promise<(Bulk | Transaction)[]> {
     if (params?.delivery_start && params.delivery_start instanceof Date) {
       params.delivery_start = params.delivery_start.toISOString();
     }
@@ -64,6 +67,29 @@ export default class Mail extends Base {
     }
     const url = "/deliveries";
     const res = await Mail.request.send("get", url, params) as SearchResponse;
+    return res.data.map((params) => Mail.fromJson(params));
+  }
+
+  /**
+   * Finds mails based on conditions.
+   *
+   * @async
+   * @param {SearchCondition} params - The search conditions.
+   * @return {Promise<(Bulk | Transaction)[]>} - The search results.
+   * @static
+   */
+  static async all(params?: SearchAllCondition):
+    Promise<(Bulk | Transaction)[]> {
+    if (params?.delivery_start && params.delivery_start instanceof Date) {
+      params.delivery_start = params.delivery_start.toISOString();
+    }
+    if (params?.delivery_end && params.delivery_end instanceof Date) {
+      params.delivery_end = params.delivery_end.toISOString();
+    }
+    const url = "/deliveries/all";
+    const res = await Mail.request.send("get", url, params) as SearchResponse;
+    console.log(res);
+    console.log(params);
     return res.data.map((params) => Mail.fromJson(params));
   }
 
@@ -182,6 +208,16 @@ export default class Mail extends Base {
   }
 
   /**
+   * Set unsubscribed information
+   *
+   * @param {Unsubscribed} params - Information of unsubscribed.
+   * @return {Base} - The current instance.
+   */
+  setUnsubscribed(params: Unsubscribed): Mail {
+    return super.setUnsubscribe(params) as Mail;
+  }
+
+  /**
    * Adds an attachment to the mail.
    *
    * @param {Attachment} file - The attachment.
@@ -236,6 +272,12 @@ export default class Mail extends Base {
       params.attachments
         .forEach((attachment) => bulk.addAttachment(attachment!));
     }
+    if (this.unsubscribe &&
+      (this.unsubscribe.email || this.unsubscribe.url)) {
+      bulk.setUnsubscribe({
+        email: this.unsubscribe.email, url: this.unsubscribe.url,
+      });
+    }
     await bulk.register();
     params.to.map((to) => bulk.addTo(to.email, to.insert_code));
     await bulk.update();
@@ -263,6 +305,12 @@ export default class Mail extends Base {
     }
     if (params.bcc && params.bcc.length > 0) {
       params.bcc.forEach((bcc) => transaction.addBcc(bcc));
+    }
+    if (this.unsubscribe &&
+      (this.unsubscribe.email || this.unsubscribe.url)) {
+      transaction.setUnsubscribe({
+        email: this.unsubscribe.email, url: this.unsubscribe.url,
+      });
     }
     if (params.attachments && params.attachments.length > 0) {
       params.attachments

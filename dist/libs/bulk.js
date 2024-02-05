@@ -244,6 +244,15 @@ class Bulk extends base_1.default {
             text_part: this.textPart,
             html_part: this.htmlPart,
         };
+        if (this.unsubscribe) {
+            params.list_unsubscribe = {};
+            if (this.unsubscribe.email) {
+                params.list_unsubscribe.mailto = `mailto:${this.unsubscribe.email}`;
+            }
+            if (this.unsubscribe.url) {
+                params.list_unsubscribe.url = this.unsubscribe.url;
+            }
+        }
         if (this.attachments.length > 0) {
             params.attachments = this.attachments;
         }
@@ -255,7 +264,7 @@ class Bulk extends base_1.default {
      * @return {RequestParamsBulkUpdate} - The prepared parameters.
      */
     updateParams() {
-        return {
+        const params = {
             from: {
                 email: this.fromEmail,
                 name: this.fromName,
@@ -265,6 +274,16 @@ class Bulk extends base_1.default {
             text_part: this.textPart,
             html_part: this.htmlPart,
         };
+        if (this.unsubscribe) {
+            params.list_unsubscribe = {};
+            if (this.unsubscribe.email) {
+                params.list_unsubscribe.mailto = `mailto:${this.unsubscribe.email}`;
+            }
+            if (this.unsubscribe.url) {
+                params.list_unsubscribe.url = this.unsubscribe.url;
+            }
+        }
+        return params;
     }
     /**
      * Prepares the parameters for committing the bulk delivery.

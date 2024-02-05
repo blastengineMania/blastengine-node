@@ -98,4 +98,19 @@ describe('Test of mail', () => {
 			expect(typeof mail.deliveryId).toBe('number');
 		});
 	});
+
+	test('Mail (transaction) w unsubscribed header successful.', async () => {
+		const mail = new Mail;
+		mail
+			.setFrom(config.from.email, config.from.name)
+			.setSubject('Unsubscribed email test')
+			.setUnsubscribe({
+				email: 'unsubscribed+aaessba@moongift.co.jp?subject=unsubscribe'
+			});
+		mail
+			.addTo(config.to)
+			.setText('メールの本文');
+		await mail.send();
+		expect(typeof mail.deliveryId).toBe('number');
+	});
 });

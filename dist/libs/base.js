@@ -59,6 +59,10 @@ class Base extends object_1.default {
          */
         this.htmlPart = "";
         /**
+         * Information of unsubscribed
+         */
+        this.unsubscribe = {};
+        /**
          * The attachments of the message.
          * @type {Attachment[]}
          */
@@ -192,10 +196,23 @@ class Base extends object_1.default {
      * Adds an attachment to the message.
      *
      * @param {Attachment} file - The file to be attached.
-     * @return {BEReturnType} - The current instance.
+     * @return {Base} - The current instance.
      */
     addAttachment(file) {
         this.attachments.push(file);
+        return this;
+    }
+    /**
+     * Set unsubscribe information
+     *
+     * @param {Unsubscribed} params - Information of unsubscribe.
+     * @return {Base} - The current instance.
+     */
+    setUnsubscribe({ email, url }) {
+        if (email)
+            this.unsubscribe.email = email;
+        if (url)
+            this.unsubscribe.url = url;
         return this;
     }
     /**

@@ -76,6 +76,29 @@ class Mail extends base_1.default {
         });
     }
     /**
+     * Finds mails based on conditions.
+     *
+     * @async
+     * @param {SearchCondition} params - The search conditions.
+     * @return {Promise<(Bulk | Transaction)[]>} - The search results.
+     * @static
+     */
+    static all(params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if ((params === null || params === void 0 ? void 0 : params.delivery_start) && params.delivery_start instanceof Date) {
+                params.delivery_start = params.delivery_start.toISOString();
+            }
+            if ((params === null || params === void 0 ? void 0 : params.delivery_end) && params.delivery_end instanceof Date) {
+                params.delivery_end = params.delivery_end.toISOString();
+            }
+            const url = "/deliveries/all";
+            const res = yield Mail.request.send("get", url, params);
+            console.log(res);
+            console.log(params);
+            return res.data.map((params) => Mail.fromJson(params));
+        });
+    }
+    /**
      * Adds a recipient to the mail.
      *
      * @param {string} email - The email address.
@@ -189,6 +212,15 @@ class Mail extends base_1.default {
         return this;
     }
     /**
+     * Set unsubscribed information
+     *
+     * @param {Unsubscribed} params - Information of unsubscribed.
+     * @return {Base} - The current instance.
+     */
+    setUnsubscribed(params) {
+        return super.setUnsubscribe(params);
+    }
+    /**
      * Adds an attachment to the mail.
      *
      * @param {Attachment} file - The attachment.
@@ -246,6 +278,12 @@ class Mail extends base_1.default {
                 params.attachments
                     .forEach((attachment) => bulk.addAttachment(attachment));
             }
+            if (this.unsubscribe &&
+                (this.unsubscribe.email || this.unsubscribe.url)) {
+                bulk.setUnsubscribe({
+                    email: this.unsubscribe.email, url: this.unsubscribe.url,
+                });
+            }
             yield bulk.register();
             params.to.map((to) => bulk.addTo(to.email, to.insert_code));
             yield bulk.update();
@@ -274,6 +312,12 @@ class Mail extends base_1.default {
             }
             if (params.bcc && params.bcc.length > 0) {
                 params.bcc.forEach((bcc) => transaction.addBcc(bcc));
+            }
+            if (this.unsubscribe &&
+                (this.unsubscribe.email || this.unsubscribe.url)) {
+                transaction.setUnsubscribe({
+                    email: this.unsubscribe.email, url: this.unsubscribe.url,
+                });
             }
             if (params.attachments && params.attachments.length > 0) {
                 params.attachments

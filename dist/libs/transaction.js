@@ -109,6 +109,15 @@ class Transaction extends base_1.default {
         if (this.attachments.length > 0) {
             params.attachments = this.attachments;
         }
+        if (this.unsubscribe) {
+            params.list_unsubscribe = {};
+            if (this.unsubscribe.email) {
+                params.list_unsubscribe.mailto = `mailto:${this.unsubscribe.email}`;
+            }
+            if (this.unsubscribe.url) {
+                params.list_unsubscribe.url = this.unsubscribe.url;
+            }
+        }
         return params;
     }
     /**
