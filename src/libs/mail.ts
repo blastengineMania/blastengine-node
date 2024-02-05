@@ -65,7 +65,7 @@ export default class Mail extends Base {
     if (params?.delivery_end && params.delivery_end instanceof Date) {
       params.delivery_end = params.delivery_end.toISOString();
     }
-    const url = "/deliveries";
+    const url = "/deliveries/all";
     const res = await Mail.request.send("get", url, params) as SearchResponse;
     return res.data.map((params) => Mail.fromJson(params));
   }
@@ -86,10 +86,8 @@ export default class Mail extends Base {
     if (params?.delivery_end && params.delivery_end instanceof Date) {
       params.delivery_end = params.delivery_end.toISOString();
     }
-    const url = "/deliveries/all";
+    const url = "/deliveries";
     const res = await Mail.request.send("get", url, params) as SearchResponse;
-    console.log(res);
-    console.log(params);
     return res.data.map((params) => Mail.fromJson(params));
   }
 
