@@ -8,7 +8,7 @@ import {
   SearchResult,
   Attachment,
   Unsubscribed,
-  SearchAllCondition,
+  SearchConditionUnsubscribe,
 } from "../../types/";
 
 /**
@@ -53,11 +53,11 @@ export default class Mail extends Base {
    * Finds mails based on conditions.
    *
    * @async
-   * @param {SearchCondition} params - The search conditions.
+   * @param {SearchConditionUnsubscribe} params - The search conditions.
    * @return {Promise<(Bulk | Transaction)[]>} - The search results.
    * @static
    */
-  static async find(params?: SearchCondition):
+  static async find(params?: SearchConditionUnsubscribe):
     Promise<(Bulk | Transaction)[]> {
     if (params?.delivery_start && params.delivery_start instanceof Date) {
       params.delivery_start = params.delivery_start.toISOString();
@@ -65,7 +65,7 @@ export default class Mail extends Base {
     if (params?.delivery_end && params.delivery_end instanceof Date) {
       params.delivery_end = params.delivery_end.toISOString();
     }
-    const url = "/deliveries/all";
+    const url = "/deliveries";
     const res = await Mail.request.send("get", url, params) as SearchResponse;
     return res.data.map((params) => Mail.fromJson(params));
   }
@@ -78,7 +78,7 @@ export default class Mail extends Base {
    * @return {Promise<(Bulk | Transaction)[]>} - The search results.
    * @static
    */
-  static async all(params?: SearchAllCondition):
+  static async all(params?: SearchCondition):
     Promise<(Bulk | Transaction)[]> {
     if (params?.delivery_start && params.delivery_start instanceof Date) {
       params.delivery_start = params.delivery_start.toISOString();
@@ -86,7 +86,7 @@ export default class Mail extends Base {
     if (params?.delivery_end && params.delivery_end instanceof Date) {
       params.delivery_end = params.delivery_end.toISOString();
     }
-    const url = "/deliveries";
+    const url = "/deliveries/all";
     const res = await Mail.request.send("get", url, params) as SearchResponse;
     return res.data.map((params) => Mail.fromJson(params));
   }

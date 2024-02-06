@@ -8,7 +8,7 @@ describe('Test of mail', () => {
 
 	describe('Delete editing bulk', () => {
 		test('Search mail', async () => {
-			const mails = await Mail.find({ size: 100, delivery_type: ['BULK'], status: ['EDIT'] }) as Bulk[];
+			const mails = await Mail.all({ size: 100, delivery_type: ['BULK'], status: ['EDIT'] }) as Bulk[];
 			for (const bulk of mails) {
 				await bulk.delete();
 			}
@@ -17,7 +17,7 @@ describe('Test of mail', () => {
 
 	describe('Find unsubscribe emails', () => {
 		test('Search mail', async () => {
-			const mails = await Mail.all({ size: 100, list_unsubscribe_mailto: 'moongift' }) as Bulk[];
+			const mails = await Mail.find({ size: 100, list_unsubscribe_mailto: 'moongift' }) as Bulk[];
 		});
 	});
 });

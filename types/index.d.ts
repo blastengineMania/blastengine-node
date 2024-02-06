@@ -241,7 +241,7 @@ export interface SearchCondition {
   sort?: SortType,
 }
 
-export interface SearchAllCondition extends SearchCondition {
+export interface SearchConditionUnsubscribe extends SearchCondition {
   list_unsubscribe_mailto?: string,
   list_unsubscribe_url?: string,
 }
