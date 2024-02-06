@@ -17,8 +17,7 @@ describe('Test of mail', () => {
 
 	describe('Find unsubscribe emails', () => {
 		test('Search mail', async () => {
-			const mails = await Mail.all({ size: 100, list_unsubscribe_mailto: 'mailto:unsubscribe+aaaa@moongift.co.jp' }) as Bulk[];
-			console.log(mails);
+			const mails = await Mail.all({ size: 100, list_unsubscribe_mailto: 'moongift' }) as Bulk[];
 		});
 	});
 });
