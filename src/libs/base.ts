@@ -1,4 +1,3 @@
-// import Transaction from './transaction';
 import BEObject from "./object";
 import Report from "./report";
 // import ErrorReport from "./error_report";
@@ -7,6 +6,7 @@ import {
   Attachment,
   GetResponseFormat,
   InsertCode,
+  SuccessJsonFormat,
   Unsubscribed,
 } from "../../types/";
 
@@ -292,6 +292,21 @@ export default class Base extends BEObject {
     if (email) this.unsubscribe.email = email;
     if (url) this.unsubscribe.url = url;
     return this;
+  }
+
+  /**
+   * Cancels the bulk delivery.
+   *
+   * @async
+   * @return {Promise<SuccessJsonFormat>} - The result of the cancel operation.
+   * @throws Will throw an error if deliveryId is not found.
+   */
+  async cancel(): Promise<SuccessJsonFormat> {
+    if (!this.deliveryId) throw new Error("Delivery id is not found.");
+    const url = `/deliveries/${this.deliveryId!}/cancel`;
+    const res = await Base.request
+      .send("patch", url) as SuccessJsonFormat;
+    return res;
   }
 
   /**

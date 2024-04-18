@@ -148,21 +148,6 @@ export default class Bulk extends Base {
   }
 
   /**
-   * Cancels the bulk delivery.
-   *
-   * @async
-   * @return {Promise<SuccessJsonFormat>} - The result of the cancel operation.
-   * @throws Will throw an error if deliveryId is not found.
-   */
-  async cancel(): Promise<SuccessJsonFormat> {
-    if (!this.deliveryId) throw new Error("Delivery id is not found.");
-    const url = `/deliveries/${this.deliveryId!}/cancel`;
-    const res = await Bulk.request
-      .send("patch", url) as SuccessJsonFormat;
-    return res;
-  }
-
-  /**
    * Gets an Email instance for the current bulk delivery.
    *
    * @return {Email} - The Email instance.
@@ -254,7 +239,9 @@ export default class Bulk extends Base {
    */
   commitParams(date?: Date): RequestParamsBulkCommit {
     if (!date) return {};
-    const reservationTime = format(date, "%FT%T%z", {timeZone: "Asia/Tokyo"})
+    const reservationTime = format(date, "yyyy-MM-dd'T'HH:mm:ssXXX", {
+      timeZone: "Asia/Tokyo",
+    })
       .replace("+0900", "+09:00");
     return {
       reservation_time: reservationTime,

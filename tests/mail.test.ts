@@ -1,3 +1,4 @@
+import exp from 'constants';
 import { BlastEngine, Mail } from '../src/';
 import config from './config.json';
 import path from 'path';
@@ -113,4 +114,22 @@ describe('Test of mail', () => {
 		await mail.send();
 		expect(typeof mail.deliveryId).toBe('number');
 	});
+
+	test('Mail (bulk) can cancel', async () => {
+		const mail = new Mail;
+		mail
+			.setFrom(config.from.email, config.from.name)
+			.setSubject('Unsubscribed email test');
+		mail
+			.addTo(config.to)
+			.setText('メールの本文');
+		// 30 sec
+		await mail.send(new Date(Date.now() + 30000));
+		await mail.get();
+		expect(mail.status).toBe('RESERVE');
+		await mail.cancel();
+		await mail.get();
+		expect(mail.status).toBe('EDIT');
+	});
+
 });

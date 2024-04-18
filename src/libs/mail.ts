@@ -248,7 +248,7 @@ export default class Mail extends Base {
           when sending to multiple recipients.`);
       }
     }
-    if (sendTime || this.params.to.length > 1) {
+    if (sendTime) {
       return this.sendBulk(sendTime);
     }
     return this.sendTransaction();
