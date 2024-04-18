@@ -58,7 +58,7 @@ class Mail extends base_1.default {
      * Finds mails based on conditions.
      *
      * @async
-     * @param {SearchCondition} params - The search conditions.
+     * @param {SearchConditionUnsubscribe} params - The search conditions.
      * @return {Promise<(Bulk | Transaction)[]>} - The search results.
      * @static
      */
@@ -93,8 +93,6 @@ class Mail extends base_1.default {
             }
             const url = "/deliveries/all";
             const res = yield Mail.request.send("get", url, params);
-            console.log(res);
-            console.log(params);
             return res.data.map((params) => Mail.fromJson(params));
         });
     }
@@ -255,7 +253,7 @@ class Mail extends base_1.default {
           when sending to multiple recipients.`);
                 }
             }
-            if (sendTime || this.params.to.length > 1) {
+            if (sendTime) {
                 return this.sendBulk(sendTime);
             }
             return this.sendTransaction();

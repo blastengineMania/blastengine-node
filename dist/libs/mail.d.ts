@@ -1,7 +1,7 @@
 import Base from "./base";
 import Bulk from "./bulk";
 import Transaction from "./transaction";
-import { MailConfig, SearchCondition, SearchResult, Attachment, Unsubscribed, SearchAllCondition } from "../../types/";
+import { MailConfig, SearchCondition, SearchResult, Attachment, Unsubscribed, SearchConditionUnsubscribe } from "../../types/";
 /**
  * Class representing a mail, extending the Base class.
  * Provides methods to set mail properties,
@@ -27,11 +27,11 @@ export default class Mail extends Base {
      * Finds mails based on conditions.
      *
      * @async
-     * @param {SearchCondition} params - The search conditions.
+     * @param {SearchConditionUnsubscribe} params - The search conditions.
      * @return {Promise<(Bulk | Transaction)[]>} - The search results.
      * @static
      */
-    static find(params?: SearchCondition): Promise<(Bulk | Transaction)[]>;
+    static find(params?: SearchConditionUnsubscribe): Promise<(Bulk | Transaction)[]>;
     /**
      * Finds mails based on conditions.
      *
@@ -40,7 +40,7 @@ export default class Mail extends Base {
      * @return {Promise<(Bulk | Transaction)[]>} - The search results.
      * @static
      */
-    static all(params?: SearchAllCondition): Promise<(Bulk | Transaction)[]>;
+    static all(params?: SearchCondition): Promise<(Bulk | Transaction)[]>;
     /**
      * Adds a recipient to the mail.
      *

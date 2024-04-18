@@ -66,14 +66,6 @@ export default class Bulk extends Base {
      */
     delete(): Promise<SuccessJsonFormat>;
     /**
-     * Cancels the bulk delivery.
-     *
-     * @async
-     * @return {Promise<SuccessJsonFormat>} - The result of the cancel operation.
-     * @throws Will throw an error if deliveryId is not found.
-     */
-    cancel(): Promise<SuccessJsonFormat>;
-    /**
      * Gets an Email instance for the current bulk delivery.
      *
      * @return {Email} - The Email instance.

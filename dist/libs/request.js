@@ -140,7 +140,8 @@ class BERequest {
                 url = `${url}?${query}`;
             }
             else if (requestInit.method.toUpperCase() === "POST" ||
-                requestInit.method.toUpperCase() === "PUT") {
+                requestInit.method.toUpperCase() === "PUT" ||
+                requestInit.method.toUpperCase() === "PATCH") {
                 requestInit.body = JSON.stringify(params);
             }
             requestInit.headers = Object.assign(Object.assign({}, requestInit.headers), { "Content-Type": "application/json" });

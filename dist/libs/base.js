@@ -12,7 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// import Transaction from './transaction';
 const object_1 = __importDefault(require("./object"));
 const report_1 = __importDefault(require("./report"));
 /**
@@ -214,6 +213,23 @@ class Base extends object_1.default {
         if (url)
             this.unsubscribe.url = url;
         return this;
+    }
+    /**
+     * Cancels the bulk delivery.
+     *
+     * @async
+     * @return {Promise<SuccessJsonFormat>} - The result of the cancel operation.
+     * @throws Will throw an error if deliveryId is not found.
+     */
+    cancel() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.deliveryId)
+                throw new Error("Delivery id is not found.");
+            const url = `/deliveries/${this.deliveryId}/cancel`;
+            const res = yield Base.request
+                .send("patch", url);
+            return res;
+        });
     }
     /**
      * Retrieves information about the delivery, based on the deliveryId.

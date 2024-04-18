@@ -1,6 +1,6 @@
 import BEObject from "./object";
 import Report from "./report";
-import { Attachment, InsertCode, Unsubscribed } from "../../types/";
+import { Attachment, InsertCode, SuccessJsonFormat, Unsubscribed } from "../../types/";
 /**
  * The Base class extends BEObject and serves as a foundation for
  * handling various message attributes and operations in the context
@@ -185,6 +185,14 @@ export default class Base extends BEObject {
      * @return {Base} - The current instance.
      */
     setUnsubscribe({ email, url }: Unsubscribed): Base;
+    /**
+     * Cancels the bulk delivery.
+     *
+     * @async
+     * @return {Promise<SuccessJsonFormat>} - The result of the cancel operation.
+     * @throws Will throw an error if deliveryId is not found.
+     */
+    cancel(): Promise<SuccessJsonFormat>;
     /**
      * Retrieves information about the delivery, based on the deliveryId.
      *

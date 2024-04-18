@@ -188,23 +188,6 @@ class Bulk extends base_1.default {
         });
     }
     /**
-     * Cancels the bulk delivery.
-     *
-     * @async
-     * @return {Promise<SuccessJsonFormat>} - The result of the cancel operation.
-     * @throws Will throw an error if deliveryId is not found.
-     */
-    cancel() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!this.deliveryId)
-                throw new Error("Delivery id is not found.");
-            const url = `/deliveries/${this.deliveryId}/cancel`;
-            const res = yield Bulk.request
-                .send("patch", url);
-            return res;
-        });
-    }
-    /**
      * Gets an Email instance for the current bulk delivery.
      *
      * @return {Email} - The Email instance.
@@ -294,7 +277,9 @@ class Bulk extends base_1.default {
     commitParams(date) {
         if (!date)
             return {};
-        const reservationTime = (0, date_fns_tz_1.format)(date, "%FT%T%z", { timeZone: "Asia/Tokyo" })
+        const reservationTime = (0, date_fns_tz_1.format)(date, "yyyy-MM-dd'T'HH:mm:ssXXX", {
+            timeZone: "Asia/Tokyo",
+        })
             .replace("+0900", "+09:00");
         return {
             reservation_time: reservationTime,
